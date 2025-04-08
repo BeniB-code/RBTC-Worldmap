@@ -64,6 +64,7 @@
             bottom: 0;
             height: 100%;
             width: 100%;
+            z-index: 1;
         }
         .filter-container { 
             margin: 20px;
@@ -87,7 +88,7 @@
         }
         .legend { 
             position: absolute; 
-            bottom: 10px; 
+            bottom: 30px; 
             left: 10px; 
             background: white; 
             padding: 10px; 
@@ -110,6 +111,7 @@
             margin: 5px 0;
             color: #0066cc;
             text-decoration: none;
+            word-break: break-all;
         }
         .info-box a:hover {
             text-decoration: underline;
@@ -140,7 +142,7 @@
             padding: 20px;
             border-radius: 5px;
             box-shadow: 0 0 10px rgba(0,0,0,0.2);
-            z-index: 1000;
+            z-index: 2000;
             display: none;
         }
     </style>
@@ -283,18 +285,33 @@
             }
         };
 
+        // Country name normalization
+        function normalizeCountryName(name) {
+            const nameMap = {
+                'United States': 'United States of America',
+                'China': 'People\'s Republic of China',
+                'Dem. Rep. Congo': 'Democratic Republic of the Congo',
+                'Congo': 'Republic of the Congo',
+                'Czech Republic': 'Czechia',
+                'Macedonia': 'North Macedonia',
+                'Swaziland': 'Eswatini',
+                'Burma': 'Myanmar'
+            };
+            return nameMap[name] || name;
+        }
+
         // CSV parsing function
         function parseCSV(csv) {
             const lines = csv.split('\n');
             const headers = lines[0].split(',');
             return lines.slice(1).map(line => {
-                const values = line.split(',');
+                const values = line.match(/(".*?"|[^",]+)(?=\s*,|\s*$)/g) || [];
                 return headers.reduce((obj, header, index) => {
-                    let value = values[index];
-                    if (value && value.startsWith('"') && value.endsWith('"')) {
+                    let value = values[index] || '';
+                    if (value.startsWith('"') && value.endsWith('"')) {
                         value = value.slice(1, -1);
                     }
-                    obj[header.trim()] = value ? value.trim() : '';
+                    obj[header.trim()] = value.trim();
                     return obj;
                 }, {});
             });
@@ -393,9 +410,11 @@
         // Load GeoJSON data
         async function loadGeoJSONData() {
             try {
+                console.log('Loading GeoJSON data...');
                 const response = await fetch('https://d2ad6b4ur7yvpq.cloudfront.net/naturalearth-3.3.0/ne_110m_admin_0_countries.geojson');
                 if (!response.ok) throw new Error('Network response was not ok');
                 geoJsonData = await response.json();
+                console.log('GeoJSON data loaded successfully');
                 updateMap();
             } catch (error) {
                 console.error('Error loading GeoJSON data:', error);
@@ -421,9 +440,13 @@
                    .map(country => country.name);
 
             geoJsonLayer = L.geoJSON(geoJsonData, {
-                filter: feature => filteredCountries.includes(feature.properties.name),
+                filter: feature => {
+                    const normalizedName = normalizeCountryName(feature.properties.name);
+                    return filteredCountries.includes(normalizedName);
+                },
                 style: feature => {
-                    const country = rbtcCountriesData.find(c => c.name === feature.properties.name);
+                    const normalizedName = normalizeCountryName(feature.properties.name);
+                    const country = rbtcCountriesData.find(c => c.name === normalizedName);
                     return {
                         fillColor: country ? (country.color === "yellow" ? '#ffff99' : '#ffcccc') : 'transparent',
                         weight: 2,
@@ -433,8 +456,8 @@
                     };
                 },
                 onEachFeature: (feature, layer) => {
-                    const countryName = feature.properties.name;
-                    const rbtcCountry = rbtcCountriesData.find(c => c.name === countryName);
+                    const normalizedName = normalizeCountryName(feature.properties.name);
+                    const rbtcCountry = rbtcCountriesData.find(c => c.name === normalizedName);
                     if (rbtcCountry) {
                         layer.on('click', () => showInfo(rbtcCountry));
                         layer.on('mouseover', () => layer.setStyle({ weight: 3, color: '#666' }));
