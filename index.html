@@ -433,10 +433,11 @@
             let filteredCountries = countryFilter !== 'all' 
                 ? [countryFilter]
                 : rbtcCountriesData
-                   .filter(country => 
-                        (continentFilter === 'all' || country.continent === continentFilter) &&
-                        (showYellow || country.color !== 'yellow')
-                    )
+                .filter(country => 
+    (continentFilter === 'all' || country.continent === continentFilter) &&
+    (showYellow || country.color !== 'yellow')
+)
+                    
                    .map(country => country.name);
 
             geoJsonLayer = L.geoJSON(geoJsonData, {
