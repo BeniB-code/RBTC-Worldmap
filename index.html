@@ -6,43 +6,181 @@
     <title>RBTC International Schools Map</title>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <style>
-        #map { height: 600px; width: 100%; }
-        .filter-container { margin: 20px; }
-        .info-box { position: absolute; top: 10px; right: 10px; background: white; padding: 10px; border: 1px solid #ccc; z-index: 1000; display: none; }
-        .legend { position: absolute; bottom: 10px; left: 10px; background: white; padding: 10px; border: 1px solid #ccc; z-index: 1000; }
+        body { 
+            font-family: Arial, sans-serif; 
+            margin: 0; 
+            padding: 0; 
+        }
+        header { 
+            background-color: #333; 
+            color: white; 
+            padding: 10px 0; 
+            text-align: center; 
+        }
+        nav { 
+            background-color: #444; 
+            color: white; 
+            padding: 10px; 
+            text-align: center; 
+        }
+        nav a { 
+            color: white; 
+            margin: 0 10px; 
+            text-decoration: none; 
+            cursor: pointer; 
+        }
+        nav a:hover {
+            text-decoration: underline;
+        }
+        .container { 
+            padding: 20px; 
+        }
+        #mapContainer {
+            position: relative;
+            width: 100%;
+            height: 600px;
+        }
+        #map { 
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            height: 100%;
+            width: 100%;
+        }
+        .filter-container { 
+            margin: 20px;
+            background: white;
+            padding: 10px;
+            border-radius: 4px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .info-box { 
+            position: absolute; 
+            top: 10px; 
+            right: 10px; 
+            background: white; 
+            padding: 10px; 
+            border: 1px solid #ccc; 
+            border-radius: 4px;
+            z-index: 1000; 
+            display: none;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+            max-width: 300px;
+        }
+        .legend { 
+            position: absolute; 
+            bottom: 10px; 
+            left: 10px; 
+            background: white; 
+            padding: 10px; 
+            border: 1px solid #ccc; 
+            border-radius: 4px;
+            z-index: 1000;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
         .legend div { margin: 5px 0; }
-        .legend .color-box { display: inline-block; width: 20px; height: 20px; vertical-align: middle; margin-right: 5px; }
-        .info-box a { display: block; margin: 5px 0; } /* Separate Links untereinander */
+        .legend .color-box { 
+            display: inline-block; 
+            width: 20px; 
+            height: 20px; 
+            vertical-align: middle; 
+            margin-right: 5px;
+            border: 1px solid #999;
+        }
+        .info-box a { 
+            display: block; 
+            margin: 5px 0;
+            color: #0066cc;
+            text-decoration: none;
+        }
+        .info-box a:hover {
+            text-decoration: underline;
+        }
+        select, input[type="checkbox"] {
+            margin: 0 10px;
+            padding: 5px;
+        }
+        .about-section, .home-section, .map-section { 
+            display: none; 
+        }
+        .active { 
+            display: block; 
+        }
+        footer {
+            background-color: #333;
+            color: white;
+            padding: 10px 0;
+            text-align: center;
+            margin-top: 20px;
+        }
     </style>
 </head>
 <body>
-    <div class="filter-container">
-        <label for="continentFilter">Kontinent:</label>
-        <select id="continentFilter" onchange="filterMap()">
-            <option value="all">Alle</option>
-            <option value="Americas">Americas</option>
-            <option value="EAME">EAME (Europe, Africa, Middle East)</option>
-            <option value="Asia/Oceania">Asia/Oceania</option>
-        </select>
-        <label for="countryFilter">Land:</label>
-        <select id="countryFilter" onchange="filterMap()">
-            <option value="all">Alle</option>
-            <!-- Dynamisch gefüllt -->
-        </select>
-        <label for="showYellow"> in RBTC Vorbereitung anzeigen:</label>
-        <input type="checkbox" id="showYellow" checked onchange="filterMap()">
+    <header>
+        <h1>RBTC International Schools Map</h1>
+    </header>
+    <nav>
+        <a onclick="showSection('home')">Home</a>
+        <a onclick="showSection('map-section')">Map</a>
+        <a onclick="showSection('about')">About</a>
+    </nav>
+    
+    <div class="container">
+        <div id="home" class="home-section active">
+            <h2>Welcome to RBTC International Schools</h2>
+            <p>Kenneth E. Hagin is the author of 110 books, which have been translated into many languages; currently over 60 million books have been published. With its radio program, RHEMA USA reaches out to more than 100 nations.</p>
+            <p>Since 1975 over 40,000 students have graduated from RBTC USA, which today is run by his son, Rev. Kenneth W. Hagin, Pastor of RHEMA Bible Church and President of RBTC USA and his wife, Lynette Hagin, Director of RBTC USA.</p>
+            <p>RBTC is active on multiple continents, showcasing its presence in various countries:</p>
+            <ul>
+                <li>Americas: 13 countries</li>
+                <li>EAME (Europe, Africa, Middle East): 22 countries</li>
+                <li>Asia/Oceania: 13 countries</li>
+            </ul>
+            <p>For more information, visit the <a href="https://www.rbtc.org/" target="_blank">official RBTC website</a>.</p>
+        </div>
+
+        <div id="map-section" class="map-section">
+            <div class="filter-container">
+                <label for="continentFilter">Kontinent:</label>
+                <select id="continentFilter" onchange="filterMap()">
+                    <option value="all">Alle</option>
+                    <option value="Americas">Americas</option>
+                    <option value="EAME">EAME (Europe, Africa, Middle East)</option>
+                    <option value="Asia/Oceania">Asia/Oceania</option>
+                </select>
+                <label for="countryFilter">Land:</label>
+                <select id="countryFilter" onchange="filterMap()">
+                    <option value="all">Alle</option>
+                </select>
+                <label for="showYellow">In RBTC Vorbereitung anzeigen:</label>
+                <input type="checkbox" id="showYellow" checked onchange="filterMap()">
+            </div>
+            <div id="mapContainer">
+                <div id="map"></div>
+                <div id="infoBox" class="info-box">
+                    <h3 id="countryName"></h3>
+                    <p>Kontinent: <span id="continent"></span></p>
+                    <p>URLs:</p>
+                    <div id="countryUrls"></div>
+                </div>
+                <div class="legend">
+                    <div><span class="color-box" style="background-color: #ffcccc;"></span> RBTC aktiv</div>
+                    <div><span class="color-box" style="background-color: #ffff99;"></span> In Vorbereitung RBTC</div>
+                </div>
+            </div>
+        </div>
+
+        <div id="about" class="about-section">
+            <h2>About</h2>
+            <p>The purpose of this website is to showcase where RBTC is active and provide direct links to the respective countries' online presence.</p>
+        </div>
     </div>
-    <div id="map"></div>
-    <div id="infoBox" class="info-box">
-        <h3 id="countryName"></h3>
-        <p>Kontinent: <span id="continent"></span></p>
-        <p>URLs:</p>
-        <div id="countryUrls"></div>
-    </div>
-    <div class="legend">
-        <div><span class="color-box" style="background-color: #ffcccc;"></span> RBTC aktiv</div>
-        <div><span class="color-box" style="background-color: #ffff99;"></span> In Vorbereitung RBTC</div>
-    </div>
+
+    <footer>
+        <p>&copy; 2025 RBTC International Schools Map. All rights reserved.</p>
+    </footer>
 
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script>
@@ -93,7 +231,7 @@
             { continent: "Asia/Oceania", name: "Thailand", url: "www.rhemathailand.org", color: "red" },
             { continent: "EAME", name: "Ukraine", url: "facebook.com/rhema-ukraine", color: "red" },
             { continent: "EAME", name: "United Kingdom", url: "rhemauk.com", color: "red" },
-            { continent: "Americas", name: "United States", url: "rbtc.org", color: "red" }, // Angepasst an GeoJSON-Namen
+            { continent: "Americas", name: "United States", url: "rbtc.org", color: "red" },
             { continent: "Asia/Oceania", name: "Vanuatu", url: "uttermostministries.org", color: "red" },
             { continent: "EAME", name: "Zambia", url: "rhemazambia.org", color: "red" },
             // Neue Länder (gelb)
@@ -104,62 +242,77 @@
             { continent: "EAME", name: "Estonia", url: "", color: "yellow" }
         ];
 
-        // Karte initialisieren
-        const map = L.map('map').setView([20, 0], 2);
+        // Karte initialisieren mit verbesserten Optionen
+        const map = L.map('map', {
+            minZoom: 2,
+            maxZoom: 8,
+            center: [20, 0],
+            zoom: 2,
+            worldCopyJump: true,
+            maxBounds: [
+                [-90, -180],
+                [90, 180]
+            ]
+        });
+
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            attribution: '©️ <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+            attribution: '©️ <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+            noWrap: true
         }).addTo(map);
 
-        // GeoJSON-Daten laden
+        // GeoJSON-Daten laden mit verbesserter Fehlerbehandlung
         let geoJsonLayer;
         let geoJsonData;
         fetch('https://d2ad6b4ur7yvpq.cloudfront.net/naturalearth-3.3.0/ne_110m_admin_0_countries.geojson')
-            .then(response => response.json())
+            .then(response => {
+                if (!response.ok) throw new Error('Network response was not ok');
+                return response.json();
+            })
             .then(data => {
                 geoJsonData = data;
-                updateMap(); // Initiale Kartenanzeige
+                updateMap();
             })
-            .catch(error => console.error('Fehler beim Laden der GeoJSON-Daten:', error));
+            .catch(error => {
+                console.error('Fehler beim Laden der GeoJSON-Daten:', error);
+                alert('Fehler beim Laden der Kartendaten. Bitte laden Sie die Seite neu.');
+            });
 
         function updateMap() {
-            if (!geoJsonData) return; // Warten, bis GeoJSON geladen ist
+            if (!geoJsonData) return;
             if (geoJsonLayer) map.removeLayer(geoJsonLayer);
 
             const continentFilter = document.getElementById('continentFilter').value;
             const countryFilter = document.getElementById('countryFilter').value;
             const showYellow = document.getElementById('showYellow').checked;
 
-            let filteredCountries;
-            if (countryFilter !== 'all') {
-                filteredCountries = [countryFilter];
-            } else {
-                filteredCountries = rbtcCountriesData
+            let filteredCountries = countryFilter !== 'all' 
+                ? [countryFilter]
+                : rbtcCountriesData
                     .filter(country => 
                         (continentFilter === 'all' || country.continent === continentFilter) &&
                         (showYellow || country.color !== 'yellow')
                     )
                     .map(country => country.name);
-            }
 
             geoJsonLayer = L.geoJSON(geoJsonData, {
-                filter: function(feature) {
-                    return filteredCountries.includes(feature.properties.name);
-                },
-                style: function(feature) {
+                filter: feature => filteredCountries.includes(feature.properties.name),
+                style: feature => {
                     const country = rbtcCountriesData.find(c => c.name === feature.properties.name);
                     return {
-                        fillColor: country.color === "yellow" ? '#ffff99' : '#ffcccc',
-                        weight: 1,
+                        fillColor: country ? (country.color === "yellow" ? '#ffff99' : '#ffcccc') : 'transparent',
+                        weight: 2,
                         opacity: 1,
                         color: 'gray',
-                        fillOpacity: 0.5
+                        fillOpacity: 0.7
                     };
                 },
-                onEachFeature: function(feature, layer) {
+                onEachFeature: (feature, layer) => {
                     const countryName = feature.properties.name;
                     const rbtcCountry = rbtcCountriesData.find(c => c.name === countryName);
                     if (rbtcCountry) {
                         layer.on('click', () => showInfo(rbtcCountry));
+                        layer.on('mouseover', () => layer.setStyle({ weight: 3, color: '#666' }));
+                        layer.on('mouseout', () => layer.setStyle({ weight: 2, color: 'gray' }));
                         if (countryFilter !== 'all') {
                             map.fitBounds(layer.getBounds());
                         }
@@ -172,18 +325,17 @@
             }
         }
 
-        // Filter-Logik
         function filterMap() {
             updateCountryFilter();
             updateMap();
         }
 
-        // Länder-Dropdown dynamisch füllen
         function updateCountryFilter() {
             const continentFilter = document.getElementById('continentFilter').value;
             const showYellow = document.getElementById('showYellow').checked;
             const countrySelect = document.getElementById('countryFilter');
             const currentValue = countrySelect.value;
+
             countrySelect.innerHTML = '<option value="all">Alle</option>';
             const filteredCountries = rbtcCountriesData
                 .filter(country => 
@@ -191,33 +343,36 @@
                     (showYellow || country.color !== 'yellow')
                 )
                 .sort((a, b) => a.name.localeCompare(b.name));
+
             filteredCountries.forEach(country => {
                 const option = document.createElement('option');
                 option.value = country.name;
                 option.textContent = country.name;
                 countrySelect.appendChild(option);
             });
+
             if (filteredCountries.some(c => c.name === currentValue)) {
                 countrySelect.value = currentValue;
             }
         }
 
-        // Info-Box anzeigen mit mehreren klickbaren Links
         function showInfo(country) {
             const infoBox = document.getElementById('infoBox');
             document.getElementById('countryName').textContent = country.name;
             document.getElementById('continent').textContent = country.continent;
             const urlsContainer = document.getElementById('countryUrls');
-            urlsContainer.innerHTML = ''; // Container leeren
+            urlsContainer.innerHTML = '';
 
-            if (country.url) {
+            if (country.url && country.url.trim()) {
                 const urls = country.url.split(',').map(url => url.trim());
                 urls.forEach(url => {
                     const link = document.createElement('a');
-                    link.href = `https://${url}`;
+                    link.href = url.startsWith('http') ? url : `https://${url}`;
                     link.textContent = url;
-                    link.target = '_blank'; // Öffnet in neuem Tab
+                    link.target = '_blank';
+                    link.rel = 'noopener noreferrer';
                     urlsContainer.appendChild(link);
+                    urlsContainer.appendChild(document.createElement('br'));
                 });
             } else {
                 urlsContainer.textContent = "Keine spezifische URL verfügbar";
@@ -225,8 +380,31 @@
             infoBox.style.display = 'block';
         }
 
+        // Schließe Info-Box beim Klicken außerhalb
+        document.addEventListener('click', function(e) {
+            const infoBox = document.getElementById('infoBox');
+            if (!infoBox.contains(e.target) && !e.target.closest('.leaflet-container')) {
+                infoBox.style.display = 'none';
+            }
+        });
+
+        function showSection(sectionId) {
+            document.querySelectorAll('.home-section, .map-section, .about-section').forEach(section => {
+                section.classList.remove('active');
+            });
+            document.getElementById(sectionId).classList.add('active');
+            
+            // Wenn die Karte angezeigt wird, aktualisieren Sie sie
+            if (sectionId === 'map-section') {
+                map.invalidateSize();
+                updateMap();
+            }
+        }
+
         // Initialisierung
         updateCountryFilter();
+        // Standardmäßig die Home-Seite anzeigen
+        showSection('home');
     </script>
 </body>
 </html>
