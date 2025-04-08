@@ -6,6 +6,7 @@
     <title>RBTC Schools Map</title>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <style>
+        /* Original CSS bleibt unverändert */
         body { 
             font-family: Arial, sans-serif; 
             margin: 0; 
@@ -32,6 +33,19 @@
         nav a:hover {
             text-decoration: underline;
         }
+        /* Neuer Style für Language Switcher */
+        #languageToggle {
+            color: white;
+            cursor: pointer;
+            padding: 5px 10px;
+            border: 1px solid white;
+            border-radius: 3px;
+            margin-left: 15px;
+        }
+        #languageToggle:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+        /* Rest des Original CSS */
         .container { 
             padding: 20px; 
         }
@@ -119,76 +133,165 @@
 </head>
 <body>
     <header>
-        <h1>RBTC Schools Map</h1>
+        <h1 data-i18n="title">RBTC Schools Map</h1>
     </header>
     <nav>
-        <a onclick="showSection('home')">Home</a>
-        <a onclick="showSection('map-section')">Map</a>
-        <a onclick="showSection('about')">About</a>
+        <a onclick="showSection('home')" data-i18n="nav-home">Home</a>
+        <a onclick="showSection('map-section')" data-i18n="nav-map">Karte</a>
+        <a onclick="showSection('about')" data-i18n="nav-about">Über uns</a>
+        <a onclick="toggleLanguage()" id="languageToggle">EN/DE</a>
     </nav>
     
     <div class="container">
         <div id="home" class="home-section active">
-            <h2>Welcome to RBTC</h2>
-            <p>Kenneth E. Hagin is the author of 110 books, which have been translated into many languages; currently over 60 million books have been published. With its radio program, RHEMA USA reaches out to more than 100 nations.
-                
-Foundation:
-
-As Brother Hagin traveled in ministry, many times he would cry out to God in the night, "How can I get this message out to Your people?" It began to dawn on him that he would have to train men and women who were just as passionate about God's Word as he was . . .</p>
-            <p>Since 1975 over 40,000 students have graduated from RBTC USA, which today is run by his son, Rev. Kenneth W. Hagin, Pastor of RHEMA Bible Church and President of RBTC USA and his wife, Lynette Hagin, Director of RBTC USA.</p>
-            <p>RBTC is active on multiple continents, showcasing its presence in various countries:</p>
+            <h2 data-i18n="welcome">Willkommen bei RBTC</h2>
+            <p data-i18n="intro">Kenneth E. Hagin ist der Autor von 110 Büchern, die in viele Sprachen übersetzt wurden; derzeit sind über 60 Millionen Bücher veröffentlicht. Mit seinem Radioprogramm, RHEMA USA .</p>
+            <p data-i18n="foundation">Gründung: Als Bruder Hagin im Dienst unterwegs war, rief er oft nachts zu Gott: "Wie kann ich diese Botschaft zu deinem Volk bringen?" Ihm wurde klar, dass er Menschen ausbilden müsste .</p>
+            <p data-i18n="graduates">Seit 1975 haben über 40.000 Studenten das RBTC USA absolviert, das heute von seinem Sohn, Rev. Kenneth W. Hagin, Pastor der RHEMA Bible Church und Präsident des RBTC USA, und seiner Frau .</p>
+            <p data-i18n="presence">RBTC ist auf mehreren Kontinenten aktiv und zeigt seine Präsenz in verschiedenen Ländern:</p>
             <ul>
-                <li>Americas: 13 countries</li>
-                <li>EAME (Europe, Africa, Middle East): 22 countries</li>
-                <li>Asia/Oceania: 13 countries</li>
+                <li data-i18n="americas">Amerika: 13 Länder</li>
+                <li data-i18n="eame">EAME (Europa, Afrika, Naher Osten): 22 Länder</li>
+                <li data-i18n="asia">Asien/Ozeanien: 13 Länder</li>
             </ul>
-            <p>For more information, visit the <a href="https://www.rbtc.org/" target="_blank">official RBTC website</a>.</p>
+            <p data-i18n="more-info">Für weitere Informationen besuchen Sie die <a href="https://www.rbtc.org/" target="_blank">offizielle RBTC-Webseite</a>.</p>
         </div>
 
         <div id="map-section" class="map-section">
             <div class="filter-container">
-                <label for="continentFilter">Kontinent:</label>
+                <label for="continentFilter" data-i18n="filter-continent">Kontinent:</label>
                 <select id="continentFilter" onchange="filterMap()">
-                    <option value="all">Alle</option>
+                    <option value="all" data-i18n="filter-all">Alle</option>
                     <option value="Americas">Americas</option>
                     <option value="EAME">EAME (Europe, Africa, Middle East)</option>
                     <option value="Asia/Oceania">Asia/Oceania</option>
                 </select>
-                <label for="countryFilter">Land:</label>
+                <label for="countryFilter" data-i18n="filter-country">Land:</label>
                 <select id="countryFilter" onchange="filterMap()">
-                    <option value="all">Alle</option>
+                    <option value="all" data-i18n="filter-all">Alle</option>
                 </select>
-                <label for="showYellow">In RBTC Vorbereitung anzeigen:</label>
+                <label for="showYellow" data-i18n="filter-preparing">In RBTC Vorbereitung anzeigen:</label>
                 <input type="checkbox" id="showYellow" checked onchange="filterMap()">
             </div>
             <div id="mapContainer">
                 <div id="map"></div>
                 <div id="infoBox" class="info-box">
                     <h3 id="countryName"></h3>
-                    <p>Kontinent: <span id="continent"></span></p>
-                    <p>URLs:</p>
+                    <p><span data-i18n="info-continent">Kontinent</span>: <span id="continent"></span></p>
+                    <p data-i18n="info-urls">URLs:</p>
                     <div id="countryUrls"></div>
                 </div>
                 <div class="legend">
-                    <div><span class="color-box" style="background-color: #ffcccc;"></span> RBTC aktiv</div>
-                    <div><span class="color-box" style="background-color: #ffff99;"></span> In Vorbereitung RBTC</div>
+                    <div><span class="color-box" style="background-color: #ffcccc;"></span> <span data-i18n="legend-active">RBTC aktiv</span></div>
+                    <div><span class="color-box" style="background-color: #ffff99;"></span> <span data-i18n="legend-preparing">In Vorbereitung RBTC</span></div>
                 </div>
             </div>
         </div>
 
         <div id="about" class="about-section">
-            <h2>About</h2>
-            <p>The purpose of this website is to showcase where RBTC is active and provide direct links to the respective countries' online presence.</p>
+            <h2 data-i18n="about-title">Über uns</h2>
+            <p data-i18n="about-text">Der Zweck dieser Website ist es zu zeigen, wo RBTC aktiv ist und direkte Links zu den jeweiligen Online-Präsenzen der Länder bereitzustellen.</p>
         </div>
     </div>
 
     <footer>
-        <p>&copy; 2025 RBTC International Schools Map. All rights reserved.</p>
+        <p data-i18n="footer">© 2025 RBTC International Schools Map. Alle Rechte vorbehalten.</p>
     </footer>
 
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script>
-        // RBTC-Länder-Daten mit URLs
+        // Übersetzungen
+        const translations = {
+            de: {
+                "title": "RBTC Schools Map",
+                "nav-home": "Home",
+                "nav-map": "Karte",
+                "nav-about": "Über uns",
+                "welcome": "Willkommen bei RBTC",
+                "intro": "Kenneth E. Hagin ist der Autor von 110 Büchern, die in viele Sprachen übersetzt wurden; derzeit sind über 60 Millionen Bücher veröffentlicht. Mit seinem Radioprogramm, RHEMA USA .",
+                "foundation": "Gründung: Als Bruder Hagin im Dienst unterwegs war, rief er oft nachts zu Gott: \"Wie kann ich diese Botschaft zu deinem Volk bringen?\" Ihm wurde klar, dass er Menschen ausbilden müsste .",
+                "graduates": "Seit 1975 haben über 40.000 Studenten das RBTC USA absolviert, das heute von seinem Sohn, Rev. Kenneth W. Hagin, Pastor der RHEMA Bible Church und Präsident des RBTC USA, und seiner Frau .",
+                "presence": "RBTC ist auf mehreren Kontinenten aktiv und zeigt seine Präsenz in verschiedenen Ländern:",
+                "americas": "Amerika: 13 Länder",
+                "eame": "EAME (Europa, Afrika, Naher Osten): 22 Länder",
+                "asia": "Asien/Ozeanien: 13 Länder",
+                "more-info": 'Für weitere Informationen besuchen Sie die <a href="https://www.rbtc.org/" target="_blank">offizielle RBTC-Webseite</a>.',
+                "filter-continent": "Kontinent:",
+                "filter-country": "Land:",
+                "filter-all": "Alle",
+                "filter-preparing": "In RBTC Vorbereitung anzeigen:",
+                "info-continent": "Kontinent",
+                "info-urls": "URLs:",
+                "no-url": "Keine spezifische URL verfügbar",
+                "legend-active": "RBTC aktiv",
+                "legend-preparing": "In Vorbereitung RBTC",
+                "about-title": "Über uns",
+                "about-text": "Der Zweck dieser Website ist es zu zeigen, wo RBTC aktiv ist und direkte Links zu den jeweiligen Online-Präsenzen der Länder bereitzustellen.",
+                "footer": "© 2025 RBTC International Schools Map. Alle Rechte vorbehalten."
+            },
+            en: {
+                "title": "RBTC Schools Map",
+                "nav-home": "Home",
+                "nav-map": "Map",
+                "nav-about": "About",
+                "welcome": "Welcome to RBTC",
+                "intro": "Kenneth E. Hagin is the author of 110 books, which have been translated into many languages; currently over 60 million books have been published. With its radio program, RHEMA USA .",
+                "foundation": "Foundation: As Brother Hagin traveled in ministry, many times he would cry out to God in the night, \"How can I get this message out to Your people?\" It began to dawn on him that he would have to train men .",
+                "graduates": "Since 1975 over 40,000 students have graduated from RBTC USA, which today is run by his son, Rev. Kenneth W. Hagin, Pastor of RHEMA Bible Church and President of RBTC USA and his wife .",
+                "presence": "RBTC is active on multiple continents, showcasing its presence in various countries:",
+                "americas": "Americas: 13 countries",
+                "eame": "EAME (Europe, Africa, Middle East): 22 countries",
+                "asia": "Asia/Oceania: 13 countries",
+                "more-info": 'For more information, visit the <a href="https://www.rbtc.org/" target="_blank">official RBTC website</a>.',
+                "filter-continent": "Continent:",
+                "filter-country": "Country:",
+                "filter-all": "All",
+                "filter-preparing": "Show RBTC in preparation:",
+                "info-continent": "Continent",
+                "info-urls": "URLs:",
+                "no-url": "No specific URL available",
+                "legend-active": "RBTC active",
+                "legend-preparing": "RBTC in preparation",
+                "about-title": "About",
+                "about-text": "The purpose of this website is to showcase where RBTC is active and provide direct links to the respective countries' online presence.",
+                "footer": "© 2025 RBTC International Schools Map. All rights reserved."
+            }
+        };
+
+        let currentLanguage = 'de';
+
+        function toggleLanguage() {
+            currentLanguage = currentLanguage === 'de' ? 'en' : 'de';
+            document.documentElement.lang = currentLanguage;
+            updateUILanguage();
+        }
+
+        function updateUILanguage() {
+            document.querySelectorAll('[data-i18n]').forEach(element => {
+                const key = element.getAttribute('data-i18n');
+                const translation = translations[currentLanguage][key];
+                if (translation) {
+                    if (element.tagName === 'INPUT' && element.type === 'text') {
+                        element.placeholder = translation;
+                    } else if (translation.includes('<a')) {
+                        element.innerHTML = translation;
+                    } else {
+                        element.textContent = translation;
+                    }
+                }
+            });
+
+            // Aktualisiere "No URL available" Text in der Info-Box
+            const urlsContainer = document.getElementById('countryUrls');
+            if (urlsContainer.textContent === translations[currentLanguage === 'de' ? 'en' : 'de']['no-url']) {
+                urlsContainer.textContent = translations[currentLanguage]['no-url'];
+            }
+
+            // Aktualisiere die Filteroptionen
+            updateCountryFilter();
+        }
+
+        // Ursprüngliche Länder-Daten
         const rbtcCountriesData = [
             { continent: "EAME", name: "Albania", url: "rhema.eu", color: "red" },
             { continent: "EAME", name: "Angola", url: "rhema.org.br", color: "red" },
@@ -246,17 +349,14 @@ As Brother Hagin traveled in ministry, many times he would cry out to God in the
             { continent: "EAME", name: "Estonia", url: "", color: "yellow" }
         ];
 
-        // Karte initialisieren mit verbesserten Optionen
+        // Karte initialisieren
         const map = L.map('map', {
             minZoom: 2,
             maxZoom: 8,
             center: [20, 0],
             zoom: 2,
             worldCopyJump: true,
-            maxBounds: [
-                [-90, -180],
-                [90, 180]
-            ]
+            maxBounds: [[-90, -180], [90, 180]]
         });
 
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -264,7 +364,7 @@ As Brother Hagin traveled in ministry, many times he would cry out to God in the
             noWrap: true
         }).addTo(map);
 
-        // GeoJSON-Daten laden mit verbesserter Fehlerbehandlung
+        // GeoJSON-Daten laden
         let geoJsonLayer;
         let geoJsonData;
         fetch('https://d2ad6b4ur7yvpq.cloudfront.net/naturalearth-3.3.0/ne_110m_admin_0_countries.geojson')
@@ -278,7 +378,7 @@ As Brother Hagin traveled in ministry, many times he would cry out to God in the
             })
             .catch(error => {
                 console.error('Fehler beim Laden der GeoJSON-Daten:', error);
-                alert('Fehler beim Laden der Kartendaten. Bitte laden Sie die Seite neu.');
+                alert(translations[currentLanguage]['error-loading']);
             });
 
         function updateMap() {
@@ -340,7 +440,7 @@ As Brother Hagin traveled in ministry, many times he would cry out to God in the
             const countrySelect = document.getElementById('countryFilter');
             const currentValue = countrySelect.value;
 
-            countrySelect.innerHTML = '<option value="all">Alle</option>';
+            countrySelect.innerHTML = `<option value="all">${translations[currentLanguage]['filter-all']}</option>`;
             const filteredCountries = rbtcCountriesData
                 .filter(country => 
                     (continentFilter === 'all' || country.continent === continentFilter) &&
@@ -379,7 +479,7 @@ As Brother Hagin traveled in ministry, many times he would cry out to God in the
                     urlsContainer.appendChild(document.createElement('br'));
                 });
             } else {
-                urlsContainer.textContent = "Keine spezifische URL verfügbar";
+                urlsContainer.textContent = translations[currentLanguage]['no-url'];
             }
             infoBox.style.display = 'block';
         }
@@ -398,18 +498,20 @@ As Brother Hagin traveled in ministry, many times he would cry out to God in the
             });
             document.getElementById(sectionId).classList.add('active');
             
-            // Wenn die Karte angezeigt wird, aktualisieren Sie sie
             if (sectionId === 'map-section') {
-                map.invalidateSize();
-                updateMap();
+                setTimeout(() => {
+                    map.invalidateSize();
+                    updateMap();
+                }, 100);
             }
         }
 
         // Initialisierung
-        updateCountryFilter();
-        // Standardmäßig die Home-Seite anzeigen
-        showSection('home');
+        document.addEventListener('DOMContentLoaded', () => {
+            updateUILanguage();
+            updateCountryFilter();
+            showSection('home');
+        });
     </script>
 </body>
 </html>
-
