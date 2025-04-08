@@ -46,7 +46,7 @@
             background: rgba(255, 255, 255, 0.1);
         }
         /* Rest des Original CSS */
-        .container { 
+       .container { 
             padding: 20px; 
         }
         #mapContainer {
@@ -63,14 +63,14 @@
             height: 100%;
             width: 100%;
         }
-        .filter-container { 
+       .filter-container { 
             margin: 20px;
             background: white;
             padding: 10px;
             border-radius: 4px;
             box-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
-        .info-box { 
+       .info-box { 
             position: absolute; 
             top: 10px; 
             right: 10px; 
@@ -83,7 +83,7 @@
             box-shadow: 0 2px 4px rgba(0,0,0,0.2);
             max-width: 300px;
         }
-        .legend { 
+       .legend { 
             position: absolute; 
             bottom: 10px; 
             left: 10px; 
@@ -94,8 +94,8 @@
             z-index: 1000;
             box-shadow: 0 2px 4px rgba(0,0,0,0.2);
         }
-        .legend div { margin: 5px 0; }
-        .legend .color-box { 
+       .legend div { margin: 5px 0; }
+       .legend.color-box { 
             display: inline-block; 
             width: 20px; 
             height: 20px; 
@@ -103,23 +103,23 @@
             margin-right: 5px;
             border: 1px solid #999;
         }
-        .info-box a { 
+       .info-box a { 
             display: block; 
             margin: 5px 0;
             color: #0066cc;
             text-decoration: none;
         }
-        .info-box a:hover {
+       .info-box a:hover {
             text-decoration: underline;
         }
         select, input[type="checkbox"] {
             margin: 0 10px;
             padding: 5px;
         }
-        .about-section, .home-section, .map-section { 
+       .about-section,.home-section,.map-section { 
             display: none; 
         }
-        .active { 
+       .active { 
             display: block; 
         }
         footer {
@@ -138,16 +138,16 @@
     <nav>
         <a onclick="showSection('home')" data-i18n="nav-home">Home</a>
         <a onclick="showSection('map-section')" data-i18n="nav-map">Karte</a>
-        <a onclick="showSection('about')" data-i18n="nav-about">Über uns</a>
+        <a onclick="showSection('about')" data-i18n="nav-about">Zweck</a>
         <a onclick="toggleLanguage()" id="languageToggle">EN/DE</a>
     </nav>
     
     <div class="container">
         <div id="home" class="home-section active">
             <h2 data-i18n="welcome">Willkommen bei RBTC</h2>
-            <p data-i18n="intro">Kenneth E. Hagin ist der Autor von 110 Büchern, die in viele Sprachen übersetzt wurden; derzeit sind über 60 Millionen Bücher veröffentlicht. Mit seinem Radioprogramm, RHEMA USA .</p>
-            <p data-i18n="foundation">Gründung: Als Bruder Hagin im Dienst unterwegs war, rief er oft nachts zu Gott: "Wie kann ich diese Botschaft zu deinem Volk bringen?" Ihm wurde klar, dass er Menschen ausbilden müsste .</p>
-            <p data-i18n="graduates">Seit 1975 haben über 40.000 Studenten das RBTC USA absolviert, das heute von seinem Sohn, Rev. Kenneth W. Hagin, Pastor der RHEMA Bible Church und Präsident des RBTC USA, und seiner Frau .</p>
+            <p data-i18n="intro">Kenneth E. Hagin ist der Autor von 110 Büchern, die in viele Sprachen übersetzt wurden; derzeit sind über 60 Millionen Bücher veröffentlicht. Mit seinem Radioprogramm, RHEMA USA.</p>
+            <p data-i18n="foundation">Gründung: Als Bruder Hagin im Dienst unterwegs war, rief er oft nachts zu Gott: "Wie kann ich diese Botschaft zu deinem Volk bringen?" Ihm wurde klar, dass er Menschen ausbilden müsste.</p>
+            <p data-i18n="graduates">Seit 1975 haben über 40.000 Studenten das RBTC USA absolviert, das heute von seinem Sohn, Rev. Kenneth W. Hagin, Pastor der RHEMA Bible Church und Präsident des RBTC USA, und seiner Frau Lynette Hagin geleite.</p>
             <p data-i18n="presence">RBTC ist auf mehreren Kontinenten aktiv und zeigt seine Präsenz in verschiedenen Ländern:</p>
             <ul>
                 <li data-i18n="americas">Amerika: 13 Länder</li>
@@ -189,7 +189,7 @@
         </div>
 
         <div id="about" class="about-section">
-            <h2 data-i18n="about-title">Über uns</h2>
+            <h2 data-i18n="about-title">Zweck</h2>
             <p data-i18n="about-text">Der Zweck dieser Website ist es zu zeigen, wo RBTC aktiv ist und direkte Links zu den jeweiligen Online-Präsenzen der Länder bereitzustellen.</p>
         </div>
     </div>
@@ -206,11 +206,11 @@
                 "title": "RBTC Schools Map",
                 "nav-home": "Home",
                 "nav-map": "Karte",
-                "nav-about": "Über uns",
+                "nav-about": "Zweck",
                 "welcome": "Willkommen bei RBTC",
-                "intro": "Kenneth E. Hagin ist der Autor von 110 Büchern, die in viele Sprachen übersetzt wurden; derzeit sind über 60 Millionen Bücher veröffentlicht. Mit seinem Radioprogramm, RHEMA USA .",
-                "foundation": "Gründung: Als Bruder Hagin im Dienst unterwegs war, rief er oft nachts zu Gott: \"Wie kann ich diese Botschaft zu deinem Volk bringen?\" Ihm wurde klar, dass er Menschen ausbilden müsste .",
-                "graduates": "Seit 1975 haben über 40.000 Studenten das RBTC USA absolviert, das heute von seinem Sohn, Rev. Kenneth W. Hagin, Pastor der RHEMA Bible Church und Präsident des RBTC USA, und seiner Frau .",
+                "intro": "Kenneth E. Hagin ist der Autor von 110 Büchern, die in viele Sprachen übersetzt wurden; derzeit sind über 60 Millionen Bücher veröffentlicht. Mit seinem Radioprogramm, RHEMA USA.",
+                "foundation": "Gründung: Als Bruder Hagin im Dienst unterwegs war, rief er oft nachts zu Gott: \"Wie kann ich diese Botschaft zu deinem Volk bringen?\" Ihm wurde klar, dass er Menschen ausbilden müsste.",
+                "graduates": "Seit 1975 haben über 40.000 Studenten das RBTC USA absolviert, das heute von seinem Sohn, Rev. Kenneth W. Hagin, Pastor der RHEMA Bible Church und Präsident des RBTC USA, und seiner Frau Lynette Hagin geleitet wird.",
                 "presence": "RBTC ist auf mehreren Kontinenten aktiv und zeigt seine Präsenz in verschiedenen Ländern:",
                 "americas": "Amerika: 13 Länder",
                 "eame": "EAME (Europa, Afrika, Naher Osten): 22 Länder",
@@ -225,7 +225,7 @@
                 "no-url": "Keine spezifische URL verfügbar",
                 "legend-active": "RBTC aktiv",
                 "legend-preparing": "In Vorbereitung RBTC",
-                "about-title": "Über uns",
+                "about-title": "Zweck",
                 "about-text": "Der Zweck dieser Website ist es zu zeigen, wo RBTC aktiv ist und direkte Links zu den jeweiligen Online-Präsenzen der Länder bereitzustellen.",
                 "footer": "© 2025 RBTC International Schools Map. Alle Rechte vorbehalten."
             },
@@ -233,11 +233,11 @@
                 "title": "RBTC Schools Map",
                 "nav-home": "Home",
                 "nav-map": "Map",
-                "nav-about": "About",
+                "nav-about": "Purpose",
                 "welcome": "Welcome to RBTC",
-                "intro": "Kenneth E. Hagin is the author of 110 books, which have been translated into many languages; currently over 60 million books have been published. With its radio program, RHEMA USA .",
-                "foundation": "Foundation: As Brother Hagin traveled in ministry, many times he would cry out to God in the night, \"How can I get this message out to Your people?\" It began to dawn on him that he would have to train men .",
-                "graduates": "Since 1975 over 40,000 students have graduated from RBTC USA, which today is run by his son, Rev. Kenneth W. Hagin, Pastor of RHEMA Bible Church and President of RBTC USA and his wife .",
+                "intro": "Kenneth E. Hagin is the author of 110 books, which have been translated into many languages; currently over 60 million books have been published. With its radio program, RHEMA USA.",
+                "foundation": "Foundation: As Brother Hagin traveled in ministry, many times he would cry out to God in the night, \"How can I get this message out to Your people?\" It began to dawn on him that he would have to train men.",
+                "graduates": "Since 1975 over 40,000 students have graduated from RBTC USA, which today is run by his son, Rev. Kenneth W. Hagin, Pastor of RHEMA Bible Church and President of RBTC USA and his wife Lynette Hagin.",
                 "presence": "RBTC is active on multiple continents, showcasing its presence in various countries:",
                 "americas": "Americas: 13 countries",
                 "eame": "EAME (Europe, Africa, Middle East): 22 countries",
@@ -252,7 +252,7 @@
                 "no-url": "No specific URL available",
                 "legend-active": "RBTC active",
                 "legend-preparing": "RBTC in preparation",
-                "about-title": "About",
+                "about-title": "Purpose",
                 "about-text": "The purpose of this website is to showcase where RBTC is active and provide direct links to the respective countries' online presence.",
                 "footer": "© 2025 RBTC International Schools Map. All rights reserved."
             }
@@ -368,15 +368,15 @@
         let geoJsonLayer;
         let geoJsonData;
         fetch('https://d2ad6b4ur7yvpq.cloudfront.net/naturalearth-3.3.0/ne_110m_admin_0_countries.geojson')
-            .then(response => {
+           .then(response => {
                 if (!response.ok) throw new Error('Network response was not ok');
                 return response.json();
             })
-            .then(data => {
+           .then(data => {
                 geoJsonData = data;
                 updateMap();
             })
-            .catch(error => {
+           .catch(error => {
                 console.error('Fehler beim Laden der GeoJSON-Daten:', error);
                 alert(translations[currentLanguage]['error-loading']);
             });
@@ -392,11 +392,11 @@
             let filteredCountries = countryFilter !== 'all' 
                 ? [countryFilter]
                 : rbtcCountriesData
-                    .filter(country => 
+                   .filter(country => 
                         (continentFilter === 'all' || country.continent === continentFilter) &&
                         (showYellow || country.color !== 'yellow')
                     )
-                    .map(country => country.name);
+                   .map(country => country.name);
 
             geoJsonLayer = L.geoJSON(geoJsonData, {
                 filter: feature => filteredCountries.includes(feature.properties.name),
@@ -442,11 +442,11 @@
 
             countrySelect.innerHTML = `<option value="all">${translations[currentLanguage]['filter-all']}</option>`;
             const filteredCountries = rbtcCountriesData
-                .filter(country => 
+               .filter(country => 
                     (continentFilter === 'all' || country.continent === continentFilter) &&
                     (showYellow || country.color !== 'yellow')
                 )
-                .sort((a, b) => a.name.localeCompare(b.name));
+               .sort((a, b) => a.name.localeCompare(b.name));
 
             filteredCountries.forEach(country => {
                 const option = document.createElement('option');
@@ -493,7 +493,7 @@
         });
 
         function showSection(sectionId) {
-            document.querySelectorAll('.home-section, .map-section, .about-section').forEach(section => {
+            document.querySelectorAll('.home-section,.map-section,.about-section').forEach(section => {
                 section.classList.remove('active');
             });
             document.getElementById(sectionId).classList.add('active');
