@@ -6,7 +6,6 @@
     <title>RBTC Schools Map</title>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <style>
-        /* Original CSS bleibt unverändert */
         body { 
             font-family: Arial, sans-serif; 
             margin: 0; 
@@ -33,7 +32,6 @@
         nav a:hover {
             text-decoration: underline;
         }
-        /* Neuer Style für Language Switcher */
         #languageToggle {
             color: white;
             cursor: pointer;
@@ -45,8 +43,7 @@
         #languageToggle:hover {
             background: rgba(255, 255, 255, 0.1);
         }
-        /* Rest des Original CSS */
-       .container { 
+        .container { 
             padding: 20px; 
         }
         #mapContainer {
@@ -63,14 +60,14 @@
             height: 100%;
             width: 100%;
         }
-       .filter-container { 
+        .filter-container { 
             margin: 20px;
             background: white;
             padding: 10px;
             border-radius: 4px;
             box-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
-       .info-box { 
+        .info-box { 
             position: absolute; 
             top: 10px; 
             right: 10px; 
@@ -83,7 +80,7 @@
             box-shadow: 0 2px 4px rgba(0,0,0,0.2);
             max-width: 300px;
         }
-       .legend { 
+        .legend { 
             position: absolute; 
             bottom: 10px; 
             left: 10px; 
@@ -94,8 +91,8 @@
             z-index: 1000;
             box-shadow: 0 2px 4px rgba(0,0,0,0.2);
         }
-       .legend div { margin: 5px 0; }
-       .legend .color-box {
+        .legend div { margin: 5px 0; }
+        .legend .color-box {
             display: inline-block; 
             width: 20px; 
             height: 20px; 
@@ -103,23 +100,23 @@
             margin-right: 5px;
             border: 1px solid #999;
         }
-       .info-box a { 
+        .info-box a { 
             display: block; 
             margin: 5px 0;
             color: #0066cc;
             text-decoration: none;
         }
-       .info-box a:hover {
+        .info-box a:hover {
             text-decoration: underline;
         }
         select, input[type="checkbox"] {
             margin: 0 10px;
             padding: 5px;
         }
-       .about-section,.home-section,.map-section { 
+        .about-section,.home-section,.map-section { 
             display: none; 
         }
-       .active { 
+        .active { 
             display: block; 
         }
         footer {
@@ -129,9 +126,22 @@
             text-align: center;
             margin-top: 20px;
         }
+        #loadingIndicator {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.2);
+            z-index: 1000;
+            display: none;
+        }
     </style>
 </head>
 <body>
+    <div id="loadingIndicator">Loading data...</div>
     <header>
         <h1 data-i18n="title">RBTC Schools Map</h1>
     </header>
@@ -145,14 +155,14 @@
     <div class="container">
         <div id="home" class="home-section active">
             <h2 data-i18n="welcome">Willkommen bei RBTC</h2>
-            <p data-i18n="intro">Kenneth E. Hagin ist der Autor von 110 Büchern, die in viele Sprachen übersetzt wurden. Mit seinem Radioprogramm, RHEMA USA rreicht das RBTC über 100 Länder.</p>
-            <p data-i18n="foundation">Gründung: Als Bruder Hagin im Dienst unterwegs war, rief er oft nachts zu Gott: "Wie kann ich diese Botschaft zu deinem Volk bringen?" Ihm wurde klar, dass er Menschen ausbilden müsste.</p>
-            <p data-i18n="graduates">Seit 1975 haben über 40.000 Studenten das RBTC USA absolviert, das heute von seinem Sohn, Rev. Kenneth W. Hagin, Pastor der RHEMA Bible Church und Präsident des RBTC USA, und seiner Frau.</p>
+            <p data-i18n="intro">Kenneth E. Hagin ist der Autor von 110 Büchern...</p>
+            <p data-i18n="foundation">Gründung: Als Bruder Hagin im Dienst unterwegs war...</p>
+            <p data-i18n="graduates">Seit 1975 haben über 40.000 Studenten...</p>
             <p data-i18n="presence">RBTC ist auf mehreren Kontinenten aktiv und zeigt seine Präsenz in verschiedenen Ländern:</p>
             <ul>
-                <li data-i18n="americas">Amerika: 13 Länder</li>
-                <li data-i18n="eame">EAME (Europa, Afrika, Naher Osten): 22 Länder</li>
-                <li data-i18n="asia">Asien/Ozeanien: 13 Länder</li>
+                <li data-i18n="americas">Amerika: 0 Länder</li>
+                <li data-i18n="eame">EAME (Europa, Afrika, Naher Osten): 0 Länder</li>
+                <li data-i18n="asia">Asien/Ozeanien: 0 Länder</li>
             </ul>
             <p data-i18n="more-info">Für weitere Informationen besuchen Sie die <a href="https://www.rbtc.org/" target="_blank">offizielle RBTC-Webseite</a>.</p>
         </div>
@@ -200,7 +210,12 @@
 
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script>
-        // Übersetzungen
+        // Global variables
+        let currentLanguage = 'de';
+        let rbtcCountriesData = [];
+        let geoJsonLayer;
+        let geoJsonData;
+
         const translations = {
             de: {
                 "title": "RBTC Schools Map",
@@ -208,13 +223,13 @@
                 "nav-map": "Karte",
                 "nav-about": "Zweck",
                 "welcome": "Willkommen bei RBTC",
-                "intro": "Kenneth E. Hagin ist der Autor von 110 Büchern, die in viele Sprachen übersetzt wurden. Mit seinem Radioprogramm, RHEMA USA erreicht Rhema mehr als 100 Länder.",
-                "foundation": "Gründung: Als Bruder Hagin im Dienst unterwegs war, rief er oft nachts zu Gott: \"Wie kann ich diese Botschaft zu deinem Volk bringen?\" Ihm wurde klar, dass er Menschen ausbilden müsste.",
-                "graduates": "Seit 1975 haben über 40.000 Studenten das RBTC USA absolviert, das heute von seinem Sohn, Rev.Kenneth W. Hagin, Pastor der RHEMA Bible Church und Präsident des RBTC USA, und seiner Frau, Lynette Hagin, Direktorin des RBTC USA, geleitet wird.",
+                "intro": "Kenneth E. Hagin ist der Autor von 110 Büchern...",
+                "foundation": "Gründung: Als Bruder Hagin im Dienst unterwegs war...",
+                "graduates": "Seit 1975 haben über 40.000 Studenten...",
                 "presence": "RBTC ist auf mehreren Kontinenten aktiv und zeigt seine Präsenz in verschiedenen Ländern:",
-                "americas": "Amerika: 13 Länder",
-                "eame": "EAME (Europa, Afrika, Naher Osten): 22 Länder",
-                "asia": "Asien/Ozeanien: 13 Länder",
+                "americas": "Amerika: 0 Länder",
+                "eame": "EAME (Europa, Afrika, Naher Osten): 0 Länder",
+                "asia": "Asien/Ozeanien: 0 Länder",
                 "more-info": 'Für weitere Informationen besuchen Sie die <a href="https://www.rbtc.org/" target="_blank">offizielle RBTC-Webseite</a>.',
                 "filter-continent": "Kontinent:",
                 "filter-country": "Land:",
@@ -227,7 +242,8 @@
                 "legend-preparing": "In Vorbereitung RBTC",
                 "about-title": "Zweck",
                 "about-text": "Der Zweck dieser Website ist es zu zeigen, wo RBTC aktiv ist und direkte Links zu den jeweiligen Online-Präsenzen der Länder bereitzustellen.",
-                "footer": "© 2025 RBTC Schools Map. Alle Rechte vorbehalten."
+                "footer": "© 2025 RBTC International Schools Map. Alle Rechte vorbehalten.",
+                "error-loading": "Fehler beim Laden der Daten"
             },
             en: {
                 "title": "RBTC Schools Map",
@@ -235,13 +251,13 @@
                 "nav-map": "Map",
                 "nav-about": "About",
                 "welcome": "Welcome to RBTC",
-                "intro": "Kenneth E. Hagin is the author of 110 books, which have been translated into many languages. With its radio program, RHEMA USA reaches out to more than 100 nations.",
-                "foundation": "Foundation: As Brother Hagin traveled in ministry, many times he would cry out to God in the night, \"How can I get this message out to Your people?\" It began to dawn on him that he would have to train men.",
-                "graduates": "Since 1975 over 40,000 students have graduated from RBTC USA, which today is run by his son, Rev. Kenneth W. Hagin, Pastor of RHEMA Bible Church and President of RBTC USA and his wife, Lynette Hagin, Director of RBTC USA.",
+                "intro": "Kenneth E. Hagin is the author of 110 books...",
+                "foundation": "Foundation: As Brother Hagin traveled in ministry...",
+                "graduates": "Since 1975 over 40,000 students...",
                 "presence": "RBTC is active on multiple continents, showcasing its presence in various countries:",
-                "americas": "Americas: 13 countries",
-                "eame": "EAME (Europe, Africa, Middle East): 22 countries",
-                "asia": "Asia/Oceania: 13 countries",
+                "americas": "Americas: 0 countries",
+                "eame": "EAME (Europe, Africa, Middle East): 0 countries",
+                "asia": "Asia/Oceania: 0 countries",
                 "more-info": 'For more information, visit the <a href="https://www.rbtc.org/" target="_blank">official RBTC website</a>.',
                 "filter-continent": "Continent:",
                 "filter-country": "Country:",
@@ -254,11 +270,72 @@
                 "legend-preparing": "RBTC in preparation",
                 "about-title": "About",
                 "about-text": "The purpose of this website is to showcase where RBTC is active and provide direct links to the respective countries' online presence.",
-                "footer": "© 2025 RBTC Schools Map. All rights reserved."
+                "footer": "© 2025 RBTC Schools Map. All rights reserved.",
+                "error-loading": "Error loading data"
             }
         };
 
-        let currentLanguage = 'de';
+        // CSV parsing function
+        function parseCSV(csv) {
+            const lines = csv.split('\n');
+            const headers = lines[0].split(',');
+            return lines.slice(1).map(line => {
+                const values = line.split(',');
+                return headers.reduce((obj, header, index) => {
+                    let value = values[index];
+                    if (value && value.startsWith('"') && value.endsWith('"')) {
+                        value = value.slice(1, -1);
+                    }
+                    obj[header.trim()] = value ? value.trim() : '';
+                    return obj;
+                }, {});
+            });
+        }
+
+        // Load CSV data
+        async function loadCountriesData() {
+            try {
+                document.getElementById('loadingIndicator').style.display = 'block';
+                const response = await fetch('rbtc_countries.csv');
+                if (!response.ok) throw new Error('Network response was not ok');
+                const csvText = await response.text();
+                rbtcCountriesData = parseCSV(csvText);
+                updateCountryCounts();
+                return true;
+            } catch (error) {
+                console.error('Error loading countries data:', error);
+                alert(translations[currentLanguage].error-loading);
+                return false;
+            } finally {
+                document.getElementById('loadingIndicator').style.display = 'none';
+            }
+        }
+
+        function updateCountryCounts() {
+            const counts = {
+                'Americas': 0,
+                'EAME': 0,
+                'Asia/Oceania': 0
+            };
+            
+            rbtcCountriesData.forEach(country => {
+                if (country.color === "red") {
+                    counts[country.continent]++;
+                }
+            });
+
+            translations.de.americas = `Amerika: ${counts['Americas']} Länder`;
+            translations.de.eame = `EAME (Europa, Afrika, Naher Osten): ${counts['EAME']} Länder`;
+            translations.de.asia = `Asien/Ozeanien: ${counts['Asia/Oceania']} Länder`;
+
+            translations.en.americas = `Americas: ${counts['Americas']} countries`;
+            translations.en.eame = `EAME (Europe, Africa, Middle East): ${counts['EAME']} countries`;
+            translations.en.asia = `Asia/Oceania: ${counts['Asia/Oceania']} countries`;
+
+            document.querySelector('[data-i18n="americas"]').textContent = translations[currentLanguage].americas;
+            document.querySelector('[data-i18n="eame"]').textContent = translations[currentLanguage].eame;
+            document.querySelector('[data-i18n="asia"]').textContent = translations[currentLanguage].asia;
+        }
 
         function toggleLanguage() {
             currentLanguage = currentLanguage === 'de' ? 'en' : 'de';
@@ -281,75 +358,16 @@
                 }
             });
 
-            // Aktualisiere "No URL available" Text in der Info-Box
             const urlsContainer = document.getElementById('countryUrls');
             if (urlsContainer.textContent === translations[currentLanguage === 'de' ? 'en' : 'de']['no-url']) {
                 urlsContainer.textContent = translations[currentLanguage]['no-url'];
             }
 
-            // Aktualisiere die Filteroptionen
+            updateCountryCounts();
             updateCountryFilter();
         }
 
-        // Ursprüngliche Länder-Daten
-        const rbtcCountriesData = [
-            { continent: "EAME", name: "Albania", url: "rhema.eu", color: "red" },
-            { continent: "EAME", name: "Angola", url: "rhema.org.br", color: "red" },
-            { continent: "Americas", name: "Argentina", url: "rhema.org.br", color: "red" },
-            { continent: "Asia/Oceania", name: "Australia", url: "rbtca.org.au", color: "red" },
-            { continent: "EAME", name: "Austria", url: "rhema-austria.org", color: "red" },
-            { continent: "EAME", name: "Botswana", url: "rhemabotswana.org", color: "red" },
-            { continent: "Americas", name: "Brazil", url: "rhema.org.br", color: "red" },
-            { continent: "Americas", name: "Canada", url: "rhemaquebec.org", color: "red" },
-            { continent: "Americas", name: "Chile", url: "rhema.org.br", color: "red" },
-            { continent: "Asia/Oceania", name: "China", url: "amoswong.org", color: "red" },
-            { continent: "Americas", name: "Colombia", url: "www.rhemacolombia.com", color: "red" },
-            { continent: "Americas", name: "Costa Rica", url: "rhemacostarica.org", color: "red" },
-            { continent: "Americas", name: "Cuba", url: "www.rhemacolombia.com", color: "red" },
-            { continent: "EAME", name: "Dem. Rep. Congo", url: "www.rhemakinshasa.com", color: "red" },
-            { continent: "EAME", name: "Egypt", url: "", color: "red" },
-            { continent: "Asia/Oceania", name: "Fiji", url: "uttermostministries.org", color: "red" },
-            { continent: "EAME", name: "France", url: "rhemafrance.com", color: "red" },
-            { continent: "EAME", name: "Germany", url: "rhemagermany.de, rbtc.de", color: "red" },
-            { continent: "EAME", name: "Ghana", url: "rhemaghana.org", color: "red" },
-            { continent: "EAME", name: "Greece", url: "rhema.eu", color: "red" },
-            { continent: "Americas", name: "Guatemala", url: "rbtcguatemala.org", color: "red" },
-            { continent: "Americas", name: "Haiti", url: "facebook.com/rhemacentredeformationbibliquehaiti", color: "red" },
-            { continent: "Asia/Oceania", name: "India", url: "rhema-chandigarh.org, rhemacoimbatore.org, rhemamumbai.com, rhemaindia.org.in", color: "red" },
-            { continent: "Asia/Oceania", name: "Indonesia", url: "facebook.com/RhemaBibleTrainingCenterIndonesia", color: "red" },
-            { continent: "EAME", name: "Italy", url: "rhemaitalia.it", color: "red" },
-            { continent: "EAME", name: "Latvia", url: "rhema.lv", color: "red" },
-            { continent: "EAME", name: "Kenya", url: "rhemakenya.org", color: "red" },
-            { continent: "Asia/Oceania", name: "Malaysia", url: "rhemamalaysia.com", color: "red" },
-            { continent: "Americas", name: "Mexico", url: "rhemamexico.org", color: "red" },
-            { continent: "Asia/Oceania", name: "Myanmar", url: "rhemathailand.org", color: "red" },
-            { continent: "EAME", name: "Netherlands", url: "rhema.nl", color: "red" },
-            { continent: "EAME", name: "Nigeria", url: "rhemanigeria.com", color: "red" },
-            { continent: "EAME", name: "Norway", url: "rhema.no", color: "red" },
-            { continent: "Asia/Oceania", name: "Papua New Guinea", url: "rbtca.org.au", color: "red" },
-            { continent: "Americas", name: "Peru", url: "", color: "red" },
-            { continent: "Asia/Oceania", name: "Philippines", url: "mkmi.org", color: "red" },
-            { continent: "EAME", name: "Poland", url: "www.rhema.org.pl", color: "red" },
-            { continent: "EAME", name: "Portugal", url: "rhema.org.br", color: "red" },
-            { continent: "EAME", name: "Congo", url: "", color: "red" },
-            { continent: "Asia/Oceania", name: "Samoa", url: "www.uttermostministries.org", color: "red" },
-            { continent: "Asia/Oceania", name: "Singapore", url: "rhema.org.sg", color: "red" },
-            { continent: "EAME", name: "Switzerland", url: "rhemasuisse.com, rhema-schweiz.ch", color: "red" },
-            { continent: "Asia/Oceania", name: "Thailand", url: "www.rhemathailand.org", color: "red" },
-            { continent: "EAME", name: "Ukraine", url: "facebook.com/rhema-ukraine", color: "red" },
-            { continent: "EAME", name: "United Kingdom", url: "rhemauk.com", color: "red" },
-            { continent: "Americas", name: "United States", url: "rbtc.org", color: "red" },
-            { continent: "Asia/Oceania", name: "Vanuatu", url: "uttermostministries.org", color: "red" },
-            { continent: "EAME", name: "Zambia", url: "rhemazambia.org", color: "red" },
-            // Neue Länder (gelb)
-            { continent: "EAME", name: "Sweden", url: "", color: "yellow" },
-            { continent: "EAME", name: "Finland", url: "", color: "yellow" },
-            { continent: "EAME", name: "Greenland", url: "", color: "yellow" },
-            { continent: "EAME", name: "Ireland", url: "", color: "yellow" },
-            { continent: "EAME", name: "Estonia", url: "", color: "yellow" }
-        ];
-
-        // Karte initialisieren
+        // Initialize map
         const map = L.map('map', {
             minZoom: 2,
             maxZoom: 8,
@@ -364,22 +382,18 @@
             noWrap: true
         }).addTo(map);
 
-        // GeoJSON-Daten laden
-        let geoJsonLayer;
-        let geoJsonData;
-        fetch('https://d2ad6b4ur7yvpq.cloudfront.net/naturalearth-3.3.0/ne_110m_admin_0_countries.geojson')
-           .then(response => {
+        // Load GeoJSON data
+        async function loadGeoJSONData() {
+            try {
+                const response = await fetch('https://d2ad6b4ur7yvpq.cloudfront.net/naturalearth-3.3.0/ne_110m_admin_0_countries.geojson');
                 if (!response.ok) throw new Error('Network response was not ok');
-                return response.json();
-            })
-           .then(data => {
-                geoJsonData = data;
+                geoJsonData = await response.json();
                 updateMap();
-            })
-           .catch(error => {
-                console.error('Fehler beim Laden der GeoJSON-Daten:', error);
-                alert(translations[currentLanguage]['error-loading']);
-            });
+            } catch (error) {
+                console.error('Error loading GeoJSON data:', error);
+                alert(translations[currentLanguage].error-loading);
+            }
+        }
 
         function updateMap() {
             if (!geoJsonData) return;
@@ -484,7 +498,7 @@
             infoBox.style.display = 'block';
         }
 
-        // Schließe Info-Box beim Klicken außerhalb
+        // Close info box when clicking outside
         document.addEventListener('click', function(e) {
             const infoBox = document.getElementById('infoBox');
             if (!infoBox.contains(e.target) && !e.target.closest('.leaflet-container')) {
@@ -506,12 +520,19 @@
             }
         }
 
-        // Initialisierung
-        document.addEventListener('DOMContentLoaded', () => {
-            updateUILanguage();
-            updateCountryFilter();
-            showSection('home');
-        });
+        // Initialization
+        async function initialize() {
+            const dataLoaded = await loadCountriesData();
+            if (dataLoaded) {
+                await loadGeoJSONData();
+                updateUILanguage();
+                updateCountryFilter();
+                showSection('home');
+            }
+        }
+
+        // Start initialization when DOM is loaded
+        document.addEventListener('DOMContentLoaded', initialize);
     </script>
 </body>
 </html>
