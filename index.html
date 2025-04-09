@@ -164,7 +164,7 @@
         <div id="home" class="home-section active">
             <h2 data-i18n="welcome">Willkommen bei RBTC</h2>
             <p data-i18n="intro">Kenneth E. Hagin ist der Autor von 110 Büchern, die in viele Sprachen übersetzt wurden. Mit seinem Radioprogramm, RHEMA USA erreicht Rhema mehr als 100 Länder.</p>
-            <p data-i18n="foundation">Gründung: Als Bruder Hagin im Dienst unterwegs war, rief er oft nachts zu Gott: "Wie kann ich diese Botschaft zu deinem Volk bringen?" Ihm wurde klar, dass er Menschen ausbilden müsste.</p>
+            <p data-i18n="foundation">Gründung: Als Bruder Hagin im Dienst unterwegs war, rief er oft nachts zu Gott: "Wie kann ich diese Botschaft zu deinem Volk bringen?" Ihm wurde klar, dass er Menschen trainieren musste, damit sie ausgehen und die Botschaft der Bibel lehrten.</p>
             <p data-i18n="graduates">Seit 1975 haben über 40.000 Studenten das RBTC USA absolviert.</p>
             <p data-i18n="presence">RBTC ist auf mehreren Kontinenten aktiv und zeigt seine Präsenz in verschiedenen Ländern:</p>
             <ul>
@@ -234,7 +234,7 @@
                 "nav-about": "Zweck",
                 "welcome": "Willkommen bei RBTC",
                 "intro": "Kenneth E. Hagin ist der Autor von 110 Büchern, die in viele Sprachen übersetzt wurden. Mit seinem Radioprogramm, RHEMA USA erreicht Rhema mehr als 100 Länder.",
-                "foundation": "Gründung: Als Bruder Hagin im Dienst unterwegs war, rief er oft nachts zu Gott: \"Wie kann ich diese Botschaft zu deinem Volk bringen?\" Ihm wurde klar, dass er Menschen ausbilden müsste.",
+                "foundation": "Gründung: Als Bruder Hagin im Dienst unterwegs war, rief er oft nachts zu Gott: \"Wie kann ich diese Botschaft zu deinem Volk bringen?\" Ihm wurde klar, dass er Menschen trainieren musste, damit sie ausgehen und die Botschaft der Bibel lehrten.",
                 "graduates": "Seit 1975 haben über 40.000 Studenten das RBTC USA absolviert.",
                 "presence": "RBTC ist auf mehreren Kontinenten aktiv und zeigt seine Präsenz in verschiedenen Ländern:",
                 "americas": "Amerika: 0 Länder",
@@ -261,7 +261,7 @@
                 "nav-about": "About",
                 "welcome": "Welcome to RBTC",
                 "intro": "Kenneth E. Hagin is the author of 110 books, which have been translated into many languages. With its radio program, RHEMA USA reaches out to more than 100 nations.",
-                "foundation": "Foundation: As Brother Hagin traveled in ministry, many times he would cry out to God in the night, \"How can I get this message out to Your people?\" It began to dawn on him that he would have to train men.",
+                "foundation": "Foundation: As Brother Hagin traveled in ministry, many times he would cry out to God in the night, \"How can I get this message out to Your people?\" It began to dawn on him that he needed to train people to go and teach the Bible's message.",
                 "graduates": "Since 1975 over 40,000 students have graduated from RBTC USA.",
                 "presence": "RBTC is active on multiple continents, showcasing its presence in various countries:",
                 "americas": "Americas: 0 countries",
@@ -329,6 +329,7 @@
                 if (!response.ok) throw new Error('Network response was not ok');
                 const csvText = await response.text();
                 rbtcCountriesData = parseCSV(csvText);
+                console.log(rbtcCountriesData); // Log the data to verify
                 updateCountryCounts();
                 return true;
             } catch (error) {
