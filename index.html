@@ -437,7 +437,7 @@
                     .filter(country => {
                         // Verbesserte Filterlogik
                         const matchesContinent = continentFilter === 'all' || country.continent === continentFilter;
-                        const matchesColor = showYellow || country.color === 'red';
+                        const matchesColor = showYellow || country.color === 'yellow';
                         return matchesContinent && matchesColor;
                     })
                     .map(country => country.name);
