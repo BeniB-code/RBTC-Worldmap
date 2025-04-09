@@ -209,7 +209,6 @@
                 <div id="infoBox" class="info-box">
                     <h3 id="countryName"></h3>
                     <p><span data-i18n="info-continent">Kontinent</span>: <span id="continent"></span></p>
-                    <p><span data-i18n="info-color">Farbe</span>: <span id="countryColor"></span></p>
                     <p data-i18n="info-urls">URLs:</p>
                     <div id="countryUrls"></div>
                     </div>
@@ -268,8 +267,7 @@
                 "about-title": "Zweck",
                 "about-text": "Der Zweck dieser Website ist es zu zeigen, wo RBTC aktiv ist und direkte Links zu den jeweiligen Online-Präsenzen der Länder bereitzustellen.",
                 "footer": "© 2025 RBTC International Schools Map. Alle Rechte vorbehalten.",
-                "error-loading": "Fehler beim Laden der Daten",
-                "info-color": "Farbe"
+                "error-loading": "Fehler beim Laden der Daten"
             },
             en: { // Englische Übersetzungen
                 "title": "RBTC Schools Map",
@@ -296,8 +294,7 @@
                 "about-title": "About",
                 "about-text": "The purpose of this website is to showcase where RBTC is active and provide direct links to the respective countries' online presence.",
                 "footer": "© 2025 RBTC International Schools Map. All rights reserved.",
-                "error-loading": "Error loading data",
-                "info-color": "Color"
+                "error-loading": "Error loading data"
             }
         };
 
@@ -565,7 +562,6 @@ function updateMap() {
             const infoBox = document.getElementById('infoBox'); // Holt das Info-Box-Element.
             document.getElementById('countryName').textContent = country.name; // Setzt den Namen des Landes in der Info-Box.
             document.getElementById('continent').textContent = country.continent; // Setzt den Kontinent des Landes in der Info-Box.
-            document.getElementById('countryColor').textContent = translations[currentLanguage][country.color === 'red' ? 'legend-active' : (country.color === 'yellow' ? 'legend-preparing' : '')]; // Setzt die Farbe des Landes in der Info-Box basierend auf der Übersetzung.
             const urlsContainer = document.getElementById('countryUrls'); // Holt den Container für die URLs.
             urlsContainer.innerHTML = ''; // Leert den vorherigen Inhalt des URL-Containers.
 
@@ -628,27 +624,3 @@ function updateMap() {
 </body>
 </html>
 
-Änderungen:
- * HTML-Anpassung in der Info-Box:
-   * Ein neues <p>-Element mit der ID countryColor wurde direkt unter dem Kontinent-Element in der infoBox hinzugefügt:
-     <p><span data-i18n="info-continent">Kontinent</span>: <span id="continent"></span></p>
-<p><span data-i18n="info-color">Farbe</span>: <span id="countryColor"></span></p>
-
-   * Ein neuer Eintrag für die Farbe wurde auch in den Übersetzungen hinzugefügt.
- * JavaScript-Anpassung in der showInfo Funktion:
-   * In der showInfo Funktion wurde die folgende Zeile hinzugefügt, um die Farbe des Landes im entsprechenden span-Element anzuzeigen:
-     document.getElementById('countryColor').textContent = translations[currentLanguage][country.color === 'red' ? 'legend-active' : (country.color === 'yellow' ? 'legend-preparing' : '')];
-
-     Diese Zeile prüft den Wert der color-Eigenschaft des country-Objekts und verwendet die entsprechenden Übersetzungen aus dem translations-Objekt (legend-active für 'red' und legend-preparing für 'yellow').
- * Hinzufügen von Übersetzungen:
-   * In der translations Objekt wurden die folgenden Schlüssel-Wert-Paare hinzugefügt, um die Beschriftung für die Farbe in der Info-Box zu unterstützen:
-     de: {
-    // ... andere Übersetzungen ...
-    "info-color": "Farbe"
-},
-en: {
-    // ... andere Übersetzungen ...
-    "info-color": "Color"
-}
-
-Nach diesen Änderungen sollte die Farbe des Landes (entweder "RBTC aktiv" oder "In Vorbereitung RBTC") in der Info-Box unterhalb der Kontinentangabe angezeigt werden, wenn Sie auf ein Land auf der Karte klicken.
