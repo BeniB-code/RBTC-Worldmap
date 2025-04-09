@@ -7,8 +7,8 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <style>
-        Body {
-            font-family: 'Open Sans', sans-serif; /* Typische Schriftart für Rhema */
+        body {
+            font-family: 'Open Sans', sans-serif;
             color: #333;
         }
         #map {
@@ -25,8 +25,6 @@
         }
         .info-box {
             position: absolute;
-            top: 10px;
-            right: 10px;
             background: #fff;
             padding: 15px;
             border: 1px solid #003087;
@@ -34,15 +32,17 @@
             z-index: 1000;
             display: none;
             box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            max-width: 300px;
+            word-wrap: break-word;
         }
-        .legend {
+        .legend, .continent-breakdown, .reach-stats {
             background: #fff;
             padding: 10px;
             border: 1px solid #003087;
             border-radius: 5px;
             z-index: 1000;
             box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-            margin-bottom: 10px; /* Optional: Fügt etwas Abstand zur Karte hinzu */
+            margin-bottom: 10px;
         }
         .legend div { margin: 5px 0; }
         .legend .color-box {
@@ -63,23 +63,8 @@
         @media (max-width: 768px) {
             #map { height: 400px; }
             .filter-container { margin: 10px 0; padding: 10px; }
-            .info-box, .legend { font-size: 14px; padding: 10px; }
+            .info-box, .legend, .continent-breakdown, .reach-stats { font-size: 14px; padding: 10px; }
         }
-
-
-<body>
-    <div class="filter-container">
-        </div>
-    <div class="legend">
-        </div>
-    <div id="map">
-        </div>
-    <div class="info-box">
-        </div>
-</body>
-
-Wenn Ihre HTML-Struktur anders ist, müssen Sie möglicherweise zusätzliche Anpassungen am CSS oder der HTML-Struktur vornehmen, um die Legende an der gewünschten Position zu platzieren.
-
     </style>
 </head>
 <body>
@@ -87,6 +72,7 @@ Wenn Ihre HTML-Struktur anders ist, müssen Sie möglicherweise zusätzliche Anp
         <div class="row">
             <div class="col-12">
                 <div class="filter-container">
+                    <button class="btn btn-primary mb-3" onclick="resetFilters()">Alle Filter zurücksetzen</button>
                     <div class="row">
                         <div class="col-md-4 mb-3">
                             <label for="continentFilter" class="form-label">Kontinent:</label>
@@ -101,7 +87,7 @@ Wenn Ihre HTML-Struktur anders ist, müssen Sie möglicherweise zusätzliche Anp
                             <label for="countryFilter" class="form-label">Land:</label>
                             <select id="countryFilter" class="form-select" onchange="filterMap()">
                                 <option value="all">Alle</option>
-                                </select>
+                            </select>
                         </div>
                         <div class="col-md-4 mb-3 d-flex align-items-end">
                             <div class="form-check">
@@ -121,6 +107,8 @@ Wenn Ihre HTML-Struktur anders ist, müssen Sie möglicherweise zusätzliche Anp
                     <div><span class="color-box" style="background-color: #ffcccc;"></span> RBTC aktiv</div>
                     <div><span class="color-box" style="background-color: #ffff99;"></span> In Vorbereitung RBTC</div>
                 </div>
+                <div class="continent-breakdown"></div>
+                <div class="reach-stats"></div>
             </div>
         </div>
     </div>
@@ -130,7 +118,7 @@ Wenn Ihre HTML-Struktur anders ist, müssen Sie möglicherweise zusätzliche Anp
     <script>
         // RBTC-Länder-Daten mit URLs
         const rbtcCountriesData = [
-             { continent: "EAME", name: "Albania", url: "rhema.eu", color: "red" },
+            { continent: "EAME", name: "Albania", url: "rhema.eu", color: "red" },
             { continent: "EAME", name: "Angola", url: "rhema.org.br", color: "red" },
             { continent: "Americas", name: "Argentina", url: "rhema.org.br", color: "red" },
             { continent: "Asia/Oceania", name: "Australia", url: "rbtca.org.au", color: "red" },
@@ -186,15 +174,21 @@ Wenn Ihre HTML-Struktur anders ist, müssen Sie möglicherweise zusätzliche Anp
             { continent: "EAME", name: "Estonia", url: "", color: "yellow" }
         ];
 
+        const allCountriesInContinents = {
+            "EAME": 50, // Gesamtanzahl Länder in der EAME-Region
+            "Americas": 35,
+            "Asia/Oceania": 48
+        };
+
         // Karte initialisieren
         const map = L.map('map').setView([20, 0], 2);
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
             attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
         }).addTo(map);
 
-        // GeoJSON-Daten laden
         let geoJsonLayer;
         let geoJsonData;
+
         fetch('https://d2ad6b4ur7yvpq.cloudfront.net/naturalearth-3.3.0/ne_110m_admin_0_countries.geojson')
             .then(response => response.json())
             .then(data => {
@@ -204,7 +198,7 @@ Wenn Ihre HTML-Struktur anders ist, müssen Sie möglicherweise zusätzliche Anp
             .catch(error => console.error('Fehler beim Laden der GeoJSON-Daten:', error));
 
         function updateMap() {
-            if (!geoJsonData) return; // Warten, bis GeoJSON geladen ist
+            if (!geoJsonData) return;
             if (geoJsonLayer) map.removeLayer(geoJsonLayer);
 
             const continentFilter = document.getElementById('continentFilter').value;
@@ -233,7 +227,7 @@ Wenn Ihre HTML-Struktur anders ist, müssen Sie möglicherweise zusätzliche Anp
                         fillColor: country ? (country.color === "yellow" ? '#ffff99' : '#ffcccc') : 'transparent',
                         weight: 1,
                         opacity: 1,
-                        color: '#003087', // Rahmenfarbe passend zu rbtc.de
+                        color: '#003087',
                         fillOpacity: 0.5
                     };
                 },
@@ -241,7 +235,10 @@ Wenn Ihre HTML-Struktur anders ist, müssen Sie möglicherweise zusätzliche Anp
                     const countryName = feature.properties.name;
                     const rbtcCountry = rbtcCountriesData.find(c => c.name === countryName);
                     if (rbtcCountry) {
-                        layer.on('click', () => showInfo(rbtcCountry));
+                        layer.on('click', (e) => {
+                            showInfo(rbtcCountry, e.latlng);
+                            setCountryFilter(rbtcCountry.name);
+                        });
                         if (countryFilter !== 'all') {
                             map.fitBounds(layer.getBounds());
                         }
@@ -254,13 +251,6 @@ Wenn Ihre HTML-Struktur anders ist, müssen Sie möglicherweise zusätzliche Anp
             }
         }
 
-        // Filter-Logik
-        function filterMap() {
-            updateCountryFilter();
-            updateMap();
-        }
-
-        // Länder-Dropdown dynamisch füllen
         function updateCountryFilter() {
             const continentFilter = document.getElementById('continentFilter').value;
             const showYellow = document.getElementById('showYellow').checked;
@@ -284,17 +274,77 @@ Wenn Ihre HTML-Struktur anders ist, müssen Sie möglicherweise zusätzliche Anp
             }
         }
 
-        // Info-Box anzeigen
-        function showInfo(country) {
+        function filterMap() {
+            updateCountryFilter();
+            updateMap();
+        }
+
+        function resetFilters() {
+            document.getElementById('continentFilter').value = 'all';
+            document.getElementById('countryFilter').value = 'all';
+            document.getElementById('showYellow').checked = true;
+            filterMap();
+            hideInfoBox();
+        }
+
+        function showInfo(country, latlng) {
             const infoBox = document.getElementById('infoBox');
             document.getElementById('countryName').textContent = country.name;
             document.getElementById('continent').textContent = country.continent;
             document.getElementById('countryUrl').textContent = country.url || "Keine spezifische URL verfügbar";
             document.getElementById('countryUrl').href = country.url ? `https://${country.url.split(',')[0].trim()}` : "#";
             infoBox.style.display = 'block';
+            const point = map.latLngToContainerPoint(latlng);
+            infoBox.style.top = `${point.y}px`;
+            infoBox.style.left = `${point.x}px`;
         }
 
-        // Initialisierung
+        function hideInfoBox() {
+            const infoBox = document.getElementById('infoBox');
+            infoBox.style.display = 'none';
+        }
+
+        function updateContinentBreakdown() {
+            const breakdownContainer = document.querySelector('.continent-breakdown');
+            breakdownContainer.innerHTML = '<h5>Aufschlüsselung nach Kontinenten</h5>';
+            const groupedData = rbtcCountriesData.reduce((acc, country) => {
+                if (!acc[country.continent]) acc[country.continent] = [];
+                acc[country.continent].push(country);
+                return acc;
+            }, {});
+
+            for (const [continent, countries] of Object.entries(groupedData)) {
+                const countryList = countries.map(c => `<li>${c.name}</li>`).join('');
+                breakdownContainer.innerHTML += `
+                    <div>
+                        <h6>${continent}</h6>
+                        <ul>${countryList}</ul>
+                    </div>
+                `;
+            }
+        }
+
+        function updateReachStats() {
+            const statsContainer = document.querySelector('.reach-stats');
+            statsContainer.innerHTML = '<h5>Erreichungsgrad pro Kontinent</h5>';
+            const groupedData = rbtcCountriesData.reduce((acc, country) => {
+                acc[country.continent] = (acc[country.continent] || 0) + 1;
+                return acc;
+            }, {});
+
+            for (const [continent, rbtcCount] of Object.entries(groupedData)) {
+                const totalCountries = allCountriesInContinents[continent] || 0;
+                const reachPercentage = ((rbtcCount / totalCountries) * 100).toFixed(2);
+                statsContainer.innerHTML += `
+                    <div>
+                        <strong>${continent}</strong>: ${rbtcCount} von ${totalCountries} Ländern (${reachPercentage}%)
+                    </div>
+                `;
+            }
+        }
+
+        updateContinentBreakdown();
+        updateReachStats();
         updateCountryFilter();
     </script>
 </body>
