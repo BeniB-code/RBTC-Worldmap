@@ -261,7 +261,7 @@
                 "nav-about": "About",
                 "welcome": "Welcome to RBTC",
                 "intro": "Kenneth E. Hagin is the author of 110 books, which have been translated into many languages. With its radio program, RHEMA USA reaches out to more than 100 nations.",
-                "foundation": "Foundation: As Brother Hagin traveled in ministry, many times he would cry out to God in the night, \\\"How can I get this message out to Your people?\\\" It began to dawn on him that he would have to train men.",
+                "foundation": "Foundation: As Brother Hagin traveled in ministry, many times he would cry out to God in the night, \"How can I get this message out to Your people?\" It began to dawn on him that he would have to train men.",
                 "graduates": "Since 1975 over 40,000 students have graduated from RBTC USA.",
                 "presence": "RBTC is active on multiple continents, showcasing its presence in various countries:",
                 "americas": "Americas: 0 countries",
@@ -312,7 +312,7 @@
                     obj[header.trim()] = value.trim();
                     return obj;
                 }, {});
-            });
+            }).filter(item => Object.keys(item).length > 0); // Filter out empty rows
         }
 
         // Load CSV data
@@ -428,39 +428,54 @@
             const countryFilter = document.getElementById('countryFilter').value;
             const showYellow = document.getElementById('showYellow').checked;
 
-            let filteredCountries = countryFilter !== 'all' 
-                ? [countryFilter]
-                : rbtcCountriesData
-                    .filter(country => 
-                        (continentFilter === 'all' || country.continent === continentFilter) &&
-                        (showYellow || country.color !== 'yellow')
-                    )
-                    .map(country => country.name);
-
             geoJsonLayer = L.geoJSON(geoJsonData, {
                 filter: feature => {
                     const normalizedName = normalizeCountryName(feature.properties.name);
-                    return filteredCountries.includes(normalizedName);
+                    
+                    // Einzelnes Land basierend auf Länderfilter
+                    if (countryFilter !== 'all') {
+                        return normalizedName === countryFilter;
+                    }
+                    
+                    // Sonst nach Kontinent und Farbstatus filtern
+                    const country = rbtcCountriesData.find(c => c.name === normalizedName);
+                    
+                    if (!country) return false;
+                    
+                    // Filter nach Kontinent
+                    if (continentFilter !== 'all' && country.continent !== continentFilter) {
+                        return false;
+                    }
+                    
+                    // Filter nach Farbe (gelb = in Vorbereitung)
+                    if (country.color === 'yellow' && !showYellow) {
+                        return false;
+                    }
+                    
+                    return true;
                 },
                 style: feature => {
                     const normalizedName = normalizeCountryName(feature.properties.name);
                     const country = rbtcCountriesData.find(c => c.name === normalizedName);
+                    
                     if (country) {
-                        if (country.color === 'yellow' && showYellow) {
+                        if (country.color === 'yellow') {
                             return { fillColor: '#ffff99', weight: 2, opacity: 1, color: 'gray', fillOpacity: 0.7 };
                         } else if (country.color === 'red') {
                             return { fillColor: '#ffcccc', weight: 2, opacity: 1, color: 'gray', fillOpacity: 0.7 };
                         }
                     }
+                    
                     return { fillColor: 'transparent', weight: 2, opacity: 1, color: 'gray', fillOpacity: 0.7 };
                 },
                 onEachFeature: (feature, layer) => {
                     const normalizedName = normalizeCountryName(feature.properties.name);
                     const rbtcCountry = rbtcCountriesData.find(c => c.name === normalizedName);
+                    
                     if (rbtcCountry) {
                         layer.on('click', () => showInfo(rbtcCountry));
                         layer.on('mouseover', () => layer.setStyle({ weight: 3, color: '#666' }));
-                        layer.on('mouseout', () => layer.setStyle({ weight: 2, color: 'gray' }));
+                        layer.on('mouseout', () => geoJsonLayer.resetStyle(layer));
                     }
                 }
             }).addTo(map);
@@ -482,11 +497,18 @@
             const currentValue = countrySelect.value;
 
             countrySelect.innerHTML = `<option value="all">${translations[currentLanguage]['filter-all']}</option>`;
+            
+            // Filtere Länder nach Kontinent und ob gelbe angezeigt werden sollen
             const filteredCountries = rbtcCountriesData
-               .filter(country => 
-                    (continentFilter === 'all' || country.continent === continentFilter) &&
-                    (showYellow || country.color !== 'yellow')
-                )
+               .filter(country => {
+                    // Prüfe Kontinent-Filter
+                    const continentMatch = continentFilter === 'all' || country.continent === continentFilter;
+                    
+                    // Prüfe auf gelbe Farbe (in Vorbereitung)
+                    const colorMatch = showYellow || country.color !== 'yellow';
+                    
+                    return continentMatch && colorMatch;
+                })
                .sort((a, b) => a.name.localeCompare(b.name));
 
             filteredCountries.forEach(country => {
@@ -496,6 +518,7 @@
                 countrySelect.appendChild(option);
             });
 
+            // Versuche, den vorherigen Wert beizubehalten
             if (filteredCountries.some(c => c.name === currentValue)) {
                 countrySelect.value = currentValue;
             }
@@ -527,7 +550,7 @@
         // Close info box when clicking outside
         document.addEventListener('click', function(e) {
             const infoBox = document.getElementById('infoBox');
-            if (!infoBox.contains(e.target) && !e.target.closest('.leaflet-container')) {
+            if (infoBox.style.display === 'block' && !infoBox.contains(e.target) && !e.target.closest('.leaflet-container')) {
                 infoBox.style.display = 'none';
             }
         });
