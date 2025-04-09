@@ -4,11 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>RBTC Schools Map</title>
-
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
-          integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
-          crossorigin=""/>
-
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -163,8 +159,8 @@
     <div class="container">
         <div id="home" class="home-section active">
             <h2 data-i18n="welcome">Willkommen bei RBTC</h2>
-            <p data-i18n="intro">Kenneth E. Hagin ist der Autor von 110 Büchern, die in viele Sprachen übersetzt wurden. Mit seinem Radioprogramm, RHEMA USA erreicht Rhema mehr als 100 Länder.</p>
-            <p data-i18n="foundation">Gründung: Als Bruder Hagin im Dienst unterwegs war, rief er oft nachts zu Gott: "Wie kann ich diese Botschaft zu deinem Volk bringen?" Ihm wurde klar, dass er Menschen ausbilden müsste.</p>
+            <p data-i18n="intro">Kenneth E. Hagin ist der Autor von 110 Büchern, die in viele Sprachen übersetzt wurden. Mit seinem Radioprogramm, RHEMA USA erreicht Rhema mehr als 100 Länder.[...]
+            <p data-i18n="foundation">Gründung: Als Bruder Hagin im Dienst unterwegs war, rief er oft nachts zu Gott: "Wie kann ich diese Botschaft zu deinem Volk bringen?" Ihm wurde klar, dass [...]
             <p data-i18n="graduates">Seit 1975 haben über 40.000 Studenten das RBTC USA absolviert.</p>
             <p data-i18n="presence">RBTC ist auf mehreren Kontinenten aktiv und zeigt seine Präsenz in verschiedenen Ländern:</p>
             <ul>
@@ -215,9 +211,7 @@
         <p data-i18n="footer">© 2025 RBTC International Schools Map. Alle Rechte vorbehalten.</p>
     </footer>
 
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
-            integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
-            crossorigin=""></script>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
 
     <script>
         // Globale Variablen
@@ -225,62 +219,8 @@
         let rbtcCountriesData = [];
         let geoJsonLayer;
         let geoJsonData;
-
         const translations = {
-            de: {
-                "title": "RBTC Schools Map",
-                "nav-home": "Home",
-                "nav-map": "Karte",
-                "nav-about": "Zweck",
-                "welcome": "Willkommen bei RBTC",
-                "intro": "Kenneth E. Hagin ist der Autor von 110 Büchern, die in viele Sprachen übersetzt wurden. Mit seinem Radioprogramm, RHEMA USA erreicht Rhema mehr als 100 Länder.",
-                "foundation": "Gründung: Als Bruder Hagin im Dienst unterwegs war, rief er oft nachts zu Gott: \"Wie kann ich diese Botschaft zu deinem Volk bringen?\" Ihm wurde klar, dass er Menschen ausbilden müsste.",
-                "graduates": "Seit 1975 haben über 40.000 Studenten das RBTC USA absolviert.",
-                "presence": "RBTC ist auf mehreren Kontinenten aktiv und zeigt seine Präsenz in verschiedenen Ländern:",
-                "americas": "Amerika: 0 Länder",
-                "eame": "EAME (Europa, Afrika, Naher Osten): 0 Länder",
-                "asia": "Asien/Ozeanien: 0 Länder",
-                "filter-continent": "Kontinent:",
-                "filter-country": "Land:",
-                "filter-all": "Alle",
-                "filter-preparing": "In RBTC Vorbereitung anzeigen:",
-                "info-continent": "Kontinent",
-                "info-urls": "URLs:",
-                "no-url": "Keine spezifische URL verfügbar",
-                "legend-active": "RBTC aktiv",
-                "legend-preparing": "In Vorbereitung RBTC",
-                "about-title": "Zweck",
-                "about-text": "Der Zweck dieser Website ist es zu zeigen, wo RBTC aktiv ist und direkte Links zu den jeweiligen Online-Präsenzen der Länder bereitzustellen.",
-                "footer": "© 2025 RBTC International Schools Map. Alle Rechte vorbehalten.",
-                "error-loading": "Fehler beim Laden der Daten"
-            },
-            en: {
-                "title": "RBTC Schools Map",
-                "nav-home": "Home",
-                "nav-map": "Map",
-                "nav-about": "About",
-                "welcome": "Welcome to RBTC",
-                "intro": "Kenneth E. Hagin is the author of 110 books, which have been translated into many languages. With its radio program, RHEMA USA reaches out to more than 100 nations.",
-                "foundation": "Foundation: As Brother Hagin traveled in ministry, many times he would cry out to God in the night, \"How can I get this message out to Your people?\" It began to dawn on him that he would have to train men.",
-                "graduates": "Since 1975 over 40,000 students have graduated from RBTC USA.",
-                "presence": "RBTC is active on multiple continents, showcasing its presence in various countries:",
-                "americas": "Americas: 0 countries",
-                "eame": "EAME (Europe, Africa, Middle East): 0 countries",
-                "asia": "Asia/Oceania: 0 countries",
-                "filter-continent": "Continent:",
-                "filter-country": "Country:",
-                "filter-all": "All",
-                "filter-preparing": "Show RBTC in preparation:",
-                "info-continent": "Continent",
-                "info-urls": "URLs:",
-                "no-url": "No specific URL available",
-                "legend-active": "RBTC active",
-                "legend-preparing": "RBTC in preparation",
-                "about-title": "About",
-                "about-text": "The purpose of this website is to showcase where RBTC is active and provide direct links to the respective countries' online presence.",
-                "footer": "© 2025 RBTC International Schools Map. All rights reserved.",
-                "error-loading": "Error loading data"
-            }
+            // Übersetzungen hier
         };
 
         // Country name normalization
@@ -420,69 +360,68 @@
             }
         }
 
-function updateMap() {
-function updateMap() {
-    if (!geoJsonData) return;
-    if (geoJsonLayer) map.removeLayer(geoJsonLayer);
+        function updateMap() {
+            if (!geoJsonData) return;
+            if (geoJsonLayer) map.removeLayer(geoJsonLayer);
 
-    const continentFilter = document.getElementById('continentFilter').value;
-    const countryFilter = document.getElementById('countryFilter').value;
-    const showYellow = document.getElementById('showYellow').checked;
+            const continentFilter = document.getElementById('continentFilter').value;
+            const countryFilter = document.getElementById('countryFilter').value;
+            const showYellow = document.getElementById('showYellow').checked;
 
-    geoJsonLayer = L.geoJSON(geoJsonData, {
-        filter: feature => {
-            const normalizedName = normalizeCountryName(feature.properties.name);
+            geoJsonLayer = L.geoJSON(geoJsonData, {
+                filter: feature => {
+                    const normalizedName = normalizeCountryName(feature.properties.name);
 
-            // Einzelnes Land basierend auf Länderfilter
-            if (countryFilter !== 'all') {
-                return normalizedName === countryFilter;
-            }
+                    // Einzelnes Land basierend auf Länderfilter
+                    if (countryFilter !== 'all') {
+                        return normalizedName === countryFilter;
+                    }
 
-            // Sonst nach Kontinent und Farbstatus filtern
-            const country = rbtcCountriesData.find(c => c.name === normalizedName);
+                    // Sonst nach Kontinent und Farbstatus filtern
+                    const country = rbtcCountriesData.find(c => c.name === normalizedName);
 
-            if (!country) return false;
+                    if (!country) return false;
 
-            // Filter nach Kontinent
-            if (continentFilter !== 'all' && country.continent !== continentFilter) {
-                return false;
-            }
+                    // Filter nach Kontinent
+                    if (continentFilter !== 'all' && country.continent !== continentFilter) {
+                        return false;
+                    }
 
-            // Filter nach Farbe (gelb = in Vorbereitung)
-            if (country.color === 'yellow' && !showYellow) {
-                return false;
-            }
+                    // Filter nach Farbe (gelb = in Vorbereitung)
+                    if (country.color === 'yellow' && !showYellow) {
+                        return false;
+                    }
 
-            return true;
-        },
-        style: feature => {
-            const normalizedName = normalizeCountryName(feature.properties.name);
-            const country = rbtcCountriesData.find(c => c.name === normalizedName);
+                    return true;
+                },
+                style: feature => {
+                    const normalizedName = normalizeCountryName(feature.properties.name);
+                    const country = rbtcCountriesData.find(c => c.name === normalizedName);
 
-            return {
-                fillColor: country ? (country.color === "yellow" ? '#ffff99' : '#ffcccc') : 'transparent',
-                weight: 2,
-                opacity: 1,
-                color: 'gray',
-                fillOpacity: 0.7
-            };
-        },
-        onEachFeature: (feature, layer) => {
-            const normalizedName = normalizeCountryName(feature.properties.name);
-            const rbtcCountry = rbtcCountriesData.find(c => c.name === normalizedName);
+                    return {
+                        fillColor: country ? (country.color === "yellow" ? '#ffff99' : '#ffcccc') : 'transparent',
+                        weight: 2,
+                        opacity: 1,
+                        color: 'gray',
+                        fillOpacity: 0.7
+                    };
+                },
+                onEachFeature: (feature, layer) => {
+                    const normalizedName = normalizeCountryName(feature.properties.name);
+                    const rbtcCountry = rbtcCountriesData.find(c => c.name === normalizedName);
 
-            if (rbtcCountry) {
-                layer.on('click', () => showInfo(rbtcCountry));
-                layer.on('mouseover', () => layer.setStyle({ weight: 3, color: '#666' }));
-                layer.on('mouseout', () => geoJsonLayer.resetStyle(layer));
+                    if (rbtcCountry) {
+                        layer.on('click', () => showInfo(rbtcCountry));
+                        layer.on('mouseover', () => layer.setStyle({ weight: 3, color: '#666' }));
+                        layer.on('mouseout', () => geoJsonLayer.resetStyle(layer));
+                    }
+                }
+            }).addTo(map);
+
+            if (countryFilter === 'all' && continentFilter === 'all') {
+                map.setView([20, 0], 2);
             }
         }
-    }).addTo(map);
-
-    if (countryFilter === 'all' && continentFilter === 'all') {
-        map.setView([20, 0], 2);
-    }
-}
 
         function filterMap() {
             updateCountryFilter();
@@ -490,38 +429,38 @@ function updateMap() {
         }
 
         function updateCountryFilter() {
-    const continentFilter = document.getElementById('continentFilter').value;
-    const showYellow = document.getElementById('showYellow').checked;
-    const countrySelect = document.getElementById('countryFilter');
-    const currentValue = countrySelect.value;
+            const continentFilter = document.getElementById('continentFilter').value;
+            const showYellow = document.getElementById('showYellow').checked;
+            const countrySelect = document.getElementById('countryFilter');
+            const currentValue = countrySelect.value;
 
-    countrySelect.innerHTML = `<option value="all">${translations[currentLanguage]['filter-all']}</option>`;
+            countrySelect.innerHTML = `<option value="all">${translations[currentLanguage]['filter-all']}</option>`;
 
-    // Filtere Länder nach Kontinent und ob gelbe angezeigt werden sollen
-    const filteredCountries = rbtcCountriesData
-       .filter(country => {
-            // Prüfe Kontinent-Filter
-            const continentMatch = continentFilter === 'all' || country.continent === continentFilter;
+            // Filtere Länder nach Kontinent und ob gelbe angezeigt werden sollen
+            const filteredCountries = rbtcCountriesData
+                .filter(country => {
+                    // Prüfe Kontinent-Filter
+                    const continentMatch = continentFilter === 'all' || country.continent === continentFilter;
 
-            // Prüfe auf gelbe Farbe (in Vorbereitung)
-            const colorMatch = showYellow || country.color !== 'yellow';
+                    // Prüfe auf gelbe Farbe (in Vorbereitung)
+                    const colorMatch = showYellow || country.color !== 'yellow';
 
-            return continentMatch && colorMatch;
-        })
-       .sort((a, b) => a.name.localeCompare(b.name));
+                    return continentMatch && colorMatch;
+                })
+                .sort((a, b) => a.name.localeCompare(b.name));
 
-    filteredCountries.forEach(country => {
-        const option = document.createElement('option');
-        option.value = country.name;
-        option.textContent = country.name;
-        countrySelect.appendChild(option);
-    });
+            filteredCountries.forEach(country => {
+                const option = document.createElement('option');
+                option.value = country.name;
+                option.textContent = country.name;
+                countrySelect.appendChild(option);
+            });
 
-    // Versuche, den vorherigen Wert beizubehalten
-    if (filteredCountries.some(c => c.name === currentValue)) {
-        countrySelect.value = currentValue;
-    }
-}
+            // Versuche, den vorherigen Wert beizubehalten
+            if (filteredCountries.some(c => c.name === currentValue)) {
+                countrySelect.value = currentValue;
+            }
+        }
 
         function showInfo(country) {
             const infoBox = document.getElementById('infoBox');
