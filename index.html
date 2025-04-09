@@ -420,70 +420,70 @@
             }
         }
 
-        function updateMap() {
-            if (!geoJsonData) return;
-            if (geoJsonLayer) map.removeLayer(geoJsonLayer);
+function updateMap() {
+    if (!geoJsonData) return;
+    if (geoJsonLayer) map.removeLayer(geoJsonLayer);
 
-            const continentFilter = document.getElementById('continentFilter').value;
-            const countryFilter = document.getElementById('countryFilter').value;
-            const showYellow = document.getElementById('showYellow').checked;
+    const continentFilter = document.getElementById('continentFilter').value;
+    const countryFilter = document.getElementById('countryFilter').value;
+    const showYellow = document.getElementById('showYellow').checked;
 
-            geoJsonLayer = L.geoJSON(geoJsonData, {
-                filter: feature => {
-                    const normalizedName = normalizeCountryName(feature.properties.name);
-                    
-                    // Einzelnes Land basierend auf Länderfilter
-                    if (countryFilter !== 'all') {
-                        return normalizedName === countryFilter;
-                    }
-                    
-                    // Sonst nach Kontinent und Farbstatus filtern
-                    const country = rbtcCountriesData.find(c => c.name === normalizedName);
-                    
-                    if (!country) return false;
-                    
-                    // Filter nach Kontinent
-                    if (continentFilter !== 'all' && country.continent !== continentFilter) {
-                        return false;
-                    }
-                    
-                    // Filter nach Farbe (gelb = in Vorbereitung)
-                    if (country.color === 'yellow' && !showYellow) {
-                        return false;
-                    }
-                    
-                    return true;
-                },
-                style: feature => {
-                    const normalizedName = normalizeCountryName(feature.properties.name);
-                    const country = rbtcCountriesData.find(c => c.name === normalizedName);
-                    
-                    if (country) {
-                        if (country.color === 'yellow') {
-                            return { fillColor: '#ffff99', weight: 2, opacity: 1, color: 'gray', fillOpacity: 0.7 };
-                        } else if (country.color === 'red') {
-                            return { fillColor: '#ffcccc', weight: 2, opacity: 1, color: 'gray', fillOpacity: 0.7 };
-                        }
-                    }
-                    
-                    return { fillColor: 'transparent', weight: 2, opacity: 1, color: 'gray', fillOpacity: 0.7 };
-                },
-                onEachFeature: (feature, layer) => {
-                    const normalizedName = normalizeCountryName(feature.properties.name);
-                    const rbtcCountry = rbtcCountriesData.find(c => c.name === normalizedName);
-                    
-                    if (rbtcCountry) {
-                        layer.on('click', () => showInfo(rbtcCountry));
-                        layer.on('mouseover', () => layer.setStyle({ weight: 3, color: '#666' }));
-                        layer.on('mouseout', () => geoJsonLayer.resetStyle(layer));
-                    }
+    geoJsonLayer = L.geoJSON(geoJsonData, {
+        filter: feature => {
+            const normalizedName = normalizeCountryName(feature.properties.name);
+            
+            // Einzelnes Land basierend auf Länderfilter
+            if (countryFilter !== 'all') {
+                return normalizedName === countryFilter;
+            }
+            
+            // Sonst nach Kontinent und Farbstatus filtern
+            const country = rbtcCountriesData.find(c => c.name === normalizedName);
+            
+            if (!country) return false;
+            
+            // Filter nach Kontinent
+            if (continentFilter !== 'all' && country.continent !== continentFilter) {
+                return false;
+            }
+            
+            // Filter nach Farbe (gelb = in Vorbereitung)
+            if (country.color === 'yellow' && !showYellow) {
+                return false;
+            }
+            
+            return true;
+        },
+        style: feature => {
+            const normalizedName = normalizeCountryName(feature.properties.name);
+            const country = rbtcCountriesData.find(c => c.name === normalizedName);
+            
+            if (country) {
+                if (country.color === 'yellow') {
+                    return { fillColor: '#ffff99', weight: 2, opacity: 1, color: 'gray', fillOpacity: 0.7 };
+                } else if (country.color === 'red') {
+                    return { fillColor: '#ffcccc', weight: 2, opacity: 1, color: 'gray', fillOpacity: 0.7 };
                 }
-            }).addTo(map);
-
-            if (countryFilter === 'all' && continentFilter === 'all') {
-                map.setView([20, 0], 2);
+            }
+            
+            return { fillColor: 'transparent', weight: 2, opacity: 1, color: 'gray', fillOpacity: 0.7 };
+        },
+        onEachFeature: (feature, layer) => {
+            const normalizedName = normalizeCountryName(feature.properties.name);
+            const rbtcCountry = rbtcCountriesData.find(c => c.name === normalizedName);
+            
+            if (rbtcCountry) {
+                layer.on('click', () => showInfo(rbtcCountry));
+                layer.on('mouseover', () => layer.setStyle({ weight: 3, color: '#666' }));
+                layer.on('mouseout', () => geoJsonLayer.resetStyle(layer));
             }
         }
+    }).addTo(map);
+
+    if (countryFilter === 'all' && continentFilter === 'all') {
+        map.setView([20, 0], 2);
+    }
+}
 
         function filterMap() {
             updateCountryFilter();
@@ -491,38 +491,38 @@
         }
 
         function updateCountryFilter() {
-            const continentFilter = document.getElementById('continentFilter').value;
-            const showYellow = document.getElementById('showYellow').checked;
-            const countrySelect = document.getElementById('countryFilter');
-            const currentValue = countrySelect.value;
+    const continentFilter = document.getElementById('continentFilter').value;
+    const showYellow = document.getElementById('showYellow').checked;
+    const countrySelect = document.getElementById('countryFilter');
+    const currentValue = countrySelect.value;
 
-            countrySelect.innerHTML = `<option value="all">${translations[currentLanguage]['filter-all']}</option>`;
+    countrySelect.innerHTML = `<option value="all">${translations[currentLanguage]['filter-all']}</option>`;
+    
+    // Filtere Länder nach Kontinent und ob gelbe angezeigt werden sollen
+    const filteredCountries = rbtcCountriesData
+       .filter(country => {
+            // Prüfe Kontinent-Filter
+            const continentMatch = continentFilter === 'all' || country.continent === continentFilter;
             
-            // Filtere Länder nach Kontinent und ob gelbe angezeigt werden sollen
-            const filteredCountries = rbtcCountriesData
-               .filter(country => {
-                    // Prüfe Kontinent-Filter
-                    const continentMatch = continentFilter === 'all' || country.continent === continentFilter;
-                    
-                    // Prüfe auf gelbe Farbe (in Vorbereitung)
-                    const colorMatch = showYellow || country.color !== 'yellow';
-                    
-                    return continentMatch && colorMatch;
-                })
-               .sort((a, b) => a.name.localeCompare(b.name));
+            // Prüfe auf gelbe Farbe (in Vorbereitung)
+            const colorMatch = showYellow || country.color !== 'yellow';
+            
+            return continentMatch && colorMatch;
+        })
+       .sort((a, b) => a.name.localeCompare(b.name));
 
-            filteredCountries.forEach(country => {
-                const option = document.createElement('option');
-                option.value = country.name;
-                option.textContent = country.name;
-                countrySelect.appendChild(option);
-            });
+    filteredCountries.forEach(country => {
+        const option = document.createElement('option');
+        option.value = country.name;
+        option.textContent = country.name;
+        countrySelect.appendChild(option);
+    });
 
-            // Versuche, den vorherigen Wert beizubehalten
-            if (filteredCountries.some(c => c.name === currentValue)) {
-                countrySelect.value = currentValue;
-            }
-        }
+    // Versuche, den vorherigen Wert beizubehalten
+    if (filteredCountries.some(c => c.name === currentValue)) {
+        countrySelect.value = currentValue;
+    }
+}
 
         function showInfo(country) {
             const infoBox = document.getElementById('infoBox');
