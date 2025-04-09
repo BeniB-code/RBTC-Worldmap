@@ -445,13 +445,14 @@
                 style: feature => {
                     const normalizedName = normalizeCountryName(feature.properties.name);
                     const country = rbtcCountriesData.find(c => c.name === normalizedName);
-                    return {
-                        fillColor: country ? (country.color === "yellow" && showYellow ? '#ffff99' : (country.color === "red" ? '#ffcccc' : 'transparent')) : 'transparent',
-                        weight: 2,
-                        opacity: 1,
-                        color: 'gray',
-                        fillOpacity: 0.7
-                    };
+                    if (country) {
+                        if (country.color === 'yellow' && showYellow) {
+                            return { fillColor: '#ffff99', weight: 2, opacity: 1, color: 'gray', fillOpacity: 0.7 };
+                        } else if (country.color === 'red') {
+                            return { fillColor: '#ffcccc', weight: 2, opacity: 1, color: 'gray', fillOpacity: 0.7 };
+                        }
+                    }
+                    return { fillColor: 'transparent', weight: 2, opacity: 1, color: 'gray', fillOpacity: 0.7 };
                 },
                 onEachFeature: (feature, layer) => {
                     const normalizedName = normalizeCountryName(feature.properties.name);
