@@ -304,44 +304,50 @@
             infoBox.style.display = 'none';
         }
 
-        function updateContinentBreakdown() {
-            const breakdownContainer = document.querySelector('.continent-breakdown');
-            breakdownContainer.innerHTML = '<h5>Aufschlüsselung nach Kontinenten</h5>';
-            const groupedData = rbtcCountriesData.reduce((acc, country) => {
-                if (!acc[country.continent]) acc[country.continent] = [];
-                acc[country.continent].push(country);
-                return acc;
-            }, {});
+function updateContinentBreakdown() {
+    const breakdownContainer = document.querySelector('.continent-breakdown');
+    breakdownContainer.innerHTML = '<h5>Aufschlüsselung nach Kontinenten</h5>';
+    const groupedData = rbtcCountriesData.reduce((acc, country) => {
+        if (!acc[country.continent]) acc[country.continent] = [];
+        acc[country.continent].push(country);
+        return acc;
+    }, {});
 
-            for (const [continent, countries] of Object.entries(groupedData)) {
-                const countryList = countries.map(c => `<li>${c.name}</li>`).join('');
-                breakdownContainer.innerHTML += `
-                    <div>
-                        <h6>${continent}</h6>
-                        <ul>${countryList}</ul>
-                    </div>
-                `;
-            }
-        }
+    for (const [continent, countries] of Object.entries(groupedData)) {
+        const countryList = countries.map(c => `
+            <li>
+                ${c.name} - ${c.url ? `<a href="https://${c.url.split(',')[0].trim()}" target="_blank">${c.url}</a>` : 'Keine spezifische URL verfügbar'} 
+                (${c.color === 'yellow' ? 'In Vorbereitung RBTC' : 'RBTC aktiv'})
+            </li>
+        `).join('');
+        breakdownContainer.innerHTML += `
+            <div>
+                <h6>${continent}</h6>
+                <ul>${countryList}</ul>
+            </div>
+        `;
+    }
+}
 
-        function updateReachStats() {
-            const statsContainer = document.querySelector('.reach-stats');
-            statsContainer.innerHTML = '<h5>Erreichungsgrad pro Kontinent</h5>';
-            const groupedData = rbtcCountriesData.reduce((acc, country) => {
-                acc[country.continent] = (acc[country.continent] || 0) + 1;
-                return acc;
-            }, {});
+function updateReachStats() {
+    const statsContainer = document.querySelector('.reach-stats');
+    statsContainer.innerHTML = '<h5>Erreichungsgrad pro Kontinent</h5>';
+    const groupedData = rbtcCountriesData.reduce((acc, country) => {
+        acc[country.continent] = (acc[country.continent] || 0) + 1;
+        return acc;
+    }, {});
 
-            for (const [continent, rbtcCount] of Object.entries(groupedData)) {
-                const totalCountries = allCountriesInContinents[continent] || 0;
-                const reachPercentage = ((rbtcCount / totalCountries) * 100).toFixed(2);
-                statsContainer.innerHTML += `
-                    <div>
-                        <strong>${continent}</strong>: ${rbtcCount} von ${totalCountries} Ländern (${reachPercentage}%)
-                    </div>
-                `;
-            }
-        }
+    for (const [continent, rbtcCount] of Object.entries(groupedData)) {
+        const totalCountries = allCountriesInContinents[continent] || 0;
+        const reachPercentage = ((rbtcCount / totalCountries) * 100).toFixed(2);
+        statsContainer.innerHTML += `
+            <div>
+                <strong>${continent}</strong>: ${rbtcCount} von ${totalCountries} Ländern (${reachPercentage}%) 
+                (${rbtcCount} RBTC aktiv/In Vorbereitung)
+            </div>
+        `;
+    }
+}
 
         updateContinentBreakdown();
         updateReachStats();
