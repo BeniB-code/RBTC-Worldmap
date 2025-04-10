@@ -232,18 +232,19 @@
                     };
                 },
                 onEachFeature: function(feature, layer) {
-                    const countryName = feature.properties.name;
-                    const rbtcCountry = rbtcCountriesData.find(c => c.name === countryName);
-                    if (rbtcCountry) {
-                        layer.on('click', (e) => {
-                            showInfo(rbtcCountry, e.latlng);
-                            setCountryFilter(rbtcCountry.name);
-                        });
-                        if (countryFilter !== 'all') {
-                            map.fitBounds(layer.getBounds());
-                        }
-                    }
-                }
+    const countryName = feature.properties.name;
+    const rbtcCountry = rbtcCountriesData.find(c => c.name === countryName);
+    if (rbtcCountry) {
+        layer.bindTooltip(countryName, { permanent: false, direction: "auto" });
+        layer.on('click', (e) => {
+            showInfo(rbtcCountry, e.latlng);
+            setCountryFilter(rbtcCountry.name);
+        });
+        if (document.getElementById('countryFilter').value !== 'all') {
+            map.fitBounds(layer.getBounds());
+        }
+    }
+}
             }).addTo(map);
 
             if (countryFilter === 'all' && continentFilter === 'all') {
