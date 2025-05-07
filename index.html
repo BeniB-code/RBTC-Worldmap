@@ -104,8 +104,8 @@
                     <p>URL: <a id="countryUrl" href="#" target="_blank"></a></p>
                 </div>
                 <div class="legend">
-                    <div><span class="color-box" style="background-color: #ffcccc;"></span> RBTC aktiv</div>
-                    <div><span class="color-box" style="background-color: #ffff99;"></span> In Vorbereitung RBTC</div>
+                    <div><span class="color-box" style="background-color: #D61F26;"></span> RBTC aktiv</div>
+                    <div><span class="color-box" style="background-color: #78797c;"></span> In Vorbereitung RBTC</div>
                 </div>
                 <div class="continent-breakdown"></div>
                 <div class="reach-stats"></div>
@@ -224,10 +224,10 @@
                 style: function(feature) {
                     const country = rbtcCountriesData.find(c => c.name === feature.properties.name);
                     return {
-                        fillColor: country ? (country.color === "yellow" ? '#ffff99' : '#ffcccc') : 'transparent',
+                        fillColor: country ? (country.color === "yellow" ? '#78797C' : '#D61F26') : 'transparent',
                         weight: 1,
                         opacity: 1,
-                        color: '#003087',
+                        color: '#27324D',
                         fillOpacity: 0.5
                     };
                 },
