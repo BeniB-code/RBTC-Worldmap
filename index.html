@@ -78,6 +78,7 @@
                             <label for="continentFilter" class="form-label">Kontinent:</label>
                             <select id="continentFilter" class="form-select" onchange="filterMap()">
                                 <option value="all">Alle</option>
+                                <option value="Europe">RBTC Europa</option>
                                 <option value="Americas">Americas</option>
                                 <option value="EAME">EAME (Europe, Africa, Middle East)</option>
                                 <option value="Asia/Oceania">Asia/Oceania</option>
@@ -91,8 +92,8 @@
                         </div>
                         <div class="col-md-4 mb-3 d-flex align-items-end">
                             <div class="form-check">
-                                <input type="checkbox" id="showYellow" class="form-check-input" checked onchange="filterMap()">
-                                <label for="showYellow" class="form-check-label">Länder in RBTC vorbereitung anzeigen</label>
+                                <input type="checkbox" id="showgray" class="form-check-input" checked onchange="filterMap()">
+                                <label for="showgray" class="form-check-label">Länder in RBTC Vorbereitung anzeigen</label>
                             </div>
                         </div>
                     </div>
@@ -104,7 +105,7 @@
                     <p>URL: <a id="countryUrl" href="#" target="_blank"></a></p>
                 </div>
                 <div class="legend">
-                    <div><span class="color-box" style="background-color: #D61F26;"></span> RBTC aktiv</div>
+                    <div><span class="color-box" style="background-color: #e48787;"></span> RBTC aktiv</div>
                     <div><span class="color-box" style="background-color: #78797c;"></span> In Vorbereitung RBTC</div>
                 </div>
                 <div class="continent-breakdown"></div>
@@ -116,7 +117,7 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script>
-        // RBTC-Länder-Daten mit URLs
+         // RBTC-Länder-Daten mit URLs
         const rbtcCountriesData = [
             { continent: "EAME", name: "Albania", url: "rhema.eu", color: "red" },
             { continent: "EAME", name: "Angola", url: "rhema.org.br", color: "red" },
@@ -166,15 +167,22 @@
             { continent: "Americas", name: "United States", url: "rbtc.org", color: "red" }, // Angepasst an GeoJSON-Namen
             { continent: "Asia/Oceania", name: "Vanuatu", url: "uttermostministries.org", color: "red" },
             { continent: "EAME", name: "Zambia", url: "rhemazambia.org", color: "red" },
-            // Neue Länder (gelb)
-            { continent: "EAME", name: "Sweden", url: "", color: "yellow" },
-            { continent: "EAME", name: "Finland", url: "", color: "yellow" },
-            { continent: "EAME", name: "Greenland", url: "", color: "yellow" },
-            { continent: "EAME", name: "Ireland", url: "", color: "yellow" },
-            { continent: "EAME", name: "Estonia", url: "", color: "yellow" }
+            // Neue Länder (gray)
+            { continent: "EAME", name: "Sweden", url: "", color: "gray" },
+            { continent: "EAME", name: "Finland", url: "", color: "gray" },
+            { continent: "EAME", name: "Greenland", url: "", color: "gray" },
+            { continent: "EAME", name: "Ireland", url: "", color: "gray" },
+            { continent: "EAME", name: "Estonia", url: "", color: "gray" }
+        ];
+
+        // Liste der europäischen Länder
+        const europeanCountries = [
+        "Albania", "Austria",   "France",  "Germany",  "Greece", "Italy", "Latvia", "Netherlands",  "Norway", "Poland", "Portugal", "Switzerland", "United Kingdom", "Ukraine",
+        "Finland","Sweden","Greenland","Ireland","Estonia" //  // Neue Länder (gray)
         ];
 
         const allCountriesInContinents = {
+            "Europe": 49, 
             "EAME": 130, // Gesamtanzahl Länder in der EAME-Region
             "Americas": 35,
             "Asia/Oceania": 48
@@ -203,17 +211,27 @@
 
             const continentFilter = document.getElementById('continentFilter').value;
             const countryFilter = document.getElementById('countryFilter').value;
-            const showYellow = document.getElementById('showYellow').checked;
+            const showgray = document.getElementById('showgray').checked;
 
             let filteredCountries;
             if (countryFilter !== 'all') {
                 filteredCountries = [countryFilter];
             } else {
                 filteredCountries = rbtcCountriesData
-                    .filter(country =>
-                        (continentFilter === 'all' || country.continent === continentFilter) &&
-                        (showYellow || country.color !== 'yellow')
-                    )
+                    .filter(country => {
+                        let continentMatch = false;
+                        if (continentFilter === 'all') {
+                            continentMatch = true;
+                        } else if (continentFilter === 'Europe') {
+                            continentMatch = europeanCountries.includes(country.name);
+                        } else if (continentFilter === 'EAME') {
+                            continentMatch = country.continent === 'EAME';
+                        } else {
+                            continentMatch = country.continent === continentFilter;
+                        }
+
+                        return continentMatch && (showgray || country.color !== 'gray');
+                    })
                     .map(country => country.name);
             }
 
@@ -224,7 +242,7 @@
                 style: function(feature) {
                     const country = rbtcCountriesData.find(c => c.name === feature.properties.name);
                     return {
-                        fillColor: country ? (country.color === "yellow" ? '#78797C' : '#D61F26') : 'transparent',
+                        fillColor: country ? (country.color === "gray" ? '#78797C' : '#D61F26') : 'transparent',
                         weight: 1,
                         opacity: 1,
                         color: '#27324D',
@@ -232,44 +250,73 @@
                     };
                 },
                 onEachFeature: function(feature, layer) {
-    const countryName = feature.properties.name;
-    const rbtcCountry = rbtcCountriesData.find(c => c.name === countryName);
-    if (rbtcCountry) {
-        layer.bindTooltip(countryName, { permanent: false, direction: "auto" });
-        layer.on('click', (e) => {
-            showInfo(rbtcCountry, e.latlng);
-            setCountryFilter(rbtcCountry.name);
-        });
-        if (document.getElementById('countryFilter').value !== 'all') {
-            map.fitBounds(layer.getBounds());
-        }
-    }
-}
+                    const countryName = feature.properties.name;
+                    const rbtcCountry = rbtcCountriesData.find(c => c.name === countryName);
+                    if (rbtcCountry) {
+                        layer.bindTooltip(countryName, { permanent: false, direction: "auto" });
+                        layer.on('click', (e) => {
+                            showInfo(rbtcCountry, e.latlng);
+                            setCountryFilter(rbtcCountry.name);
+                        });
+                        if (document.getElementById('countryFilter').value !== 'all') {
+                            map.fitBounds(layer.getBounds());
+                        }
+                    }
+                }
             }).addTo(map);
 
-            if (countryFilter === 'all' && continentFilter === 'all') {
+            // Neuer Code zum Zoomen auf die gefilterte Region
+            if (continentFilter !== 'all') {
+                let bounds;
+                if (continentFilter === 'Europe') {
+                    bounds = L.latLngBounds([30, -10], [65, 35]);
+                } else if (continentFilter === 'Americas') {
+                    bounds = L.latLngBounds([-55, -170], [75, -35]);
+                } else if (continentFilter === 'EAME') {
+                    bounds = L.latLngBounds([5, -30], [75, 55]);
+                } else if (continentFilter === 'Asia/Oceania') {
+                    bounds = L.latLngBounds([-30, 110], [45, 120]);
+                }
+                map.fitBounds(bounds);
+            } else {
                 map.setView([20, 0], 2);
             }
         }
 
         function updateCountryFilter() {
             const continentFilter = document.getElementById('continentFilter').value;
-            const showYellow = document.getElementById('showYellow').checked;
+            const showgray = document.getElementById('showgray').checked;
             const countrySelect = document.getElementById('countryFilter');
             const currentValue = countrySelect.value;
             countrySelect.innerHTML = '<option value="all">Alle</option>';
-            const filteredCountries = rbtcCountriesData
-                .filter(country =>
-                    (continentFilter === 'all' || country.continent === continentFilter) &&
-                    (showYellow || country.color !== 'yellow')
-                )
-                .sort((a, b) => a.name.localeCompare(b.name));
+            let filteredCountriesData;
+
+            if (continentFilter === 'Europe') {
+                filteredCountriesData = rbtcCountriesData
+                    .filter(country => europeanCountries.includes(country.name) && (showgray || country.color !== 'gray'));
+            } else if (continentFilter === 'all') {
+                filteredCountriesData = rbtcCountriesData
+                    .filter(country => (showgray || country.color !== 'gray'));
+            } else {
+                filteredCountriesData = rbtcCountriesData
+                    .filter(country => {
+                        if (continentFilter === 'EAME') {
+                            return country.continent === 'EAME' && (showgray || country.color !== 'gray');
+                        } else {
+                            return country.continent === continentFilter && (showgray || country.color !== 'gray');
+                        }
+                    });
+            }
+
+            const filteredCountries = filteredCountriesData.sort((a, b) => a.name.localeCompare(b.name));
+
             filteredCountries.forEach(country => {
                 const option = document.createElement('option');
                 option.value = country.name;
                 option.textContent = country.name;
                 countrySelect.appendChild(option);
             });
+
             if (filteredCountries.some(c => c.name === currentValue)) {
                 countrySelect.value = currentValue;
             }
@@ -283,7 +330,7 @@
         function resetFilters() {
             document.getElementById('continentFilter').value = 'all';
             document.getElementById('countryFilter').value = 'all';
-            document.getElementById('showYellow').checked = true;
+            document.getElementById('showgray').checked = true;
             filterMap();
             hideInfoBox();
         }
@@ -291,7 +338,7 @@
         function showInfo(country, latlng) {
             const infoBox = document.getElementById('infoBox');
             document.getElementById('countryName').textContent = country.name;
-            document.getElementById('continent').textContent = country.continent;
+            document.getElementById('continent').textContent = country.continent === 'EAME' && europeanCountries.includes(country.name) ? 'RBTC Europa' : country.continent;
             document.getElementById('countryUrl').textContent = country.url || "Keine spezifische URL verfügbar";
             document.getElementById('countryUrl').href = country.url ? `https://${country.url.split(',')[0].trim()}` : "#";
             infoBox.style.display = 'block';
@@ -305,50 +352,64 @@
             infoBox.style.display = 'none';
         }
 
-function updateContinentBreakdown() {
-    const breakdownContainer = document.querySelector('.continent-breakdown');
-    breakdownContainer.innerHTML = '<h5>Aufschlüsselung nach Kontinenten</h5>';
-    const groupedData = rbtcCountriesData.reduce((acc, country) => {
-        if (!acc[country.continent]) acc[country.continent] = [];
-        acc[country.continent].push(country);
-        return acc;
-    }, {});
+        function setCountryFilter(countryName) {
+            const countrySelect = document.getElementById('countryFilter');
+            countrySelect.value = countryName;
+            filterMap();
+        }
 
-    for (const [continent, countries] of Object.entries(groupedData)) {
-        const countryList = countries.map(c => `
-            <li>
-                ${c.name} - ${c.url ? `<a href="https://${c.url.split(',')[0].trim()}" target="_blank">${c.url}</a>` : 'Keine spezifische URL verfügbar'} 
-                (${c.color === 'yellow' ? 'In Vorbereitung RBTC' : 'RBTC aktiv'})
-            </li>
-        `).join('');
-        breakdownContainer.innerHTML += `
-            <div>
-                <h6>${continent}</h6>
-                <ul>${countryList}</ul>
-            </div>
-        `;
-    }
-}
+        function updateContinentBreakdown() {
+            const breakdownContainer = document.querySelector('.continent-breakdown');
+            breakdownContainer.innerHTML = '<h5>Aufschlüsselung nach Kontinenten</h5>';
+            const groupedData = rbtcCountriesData.reduce((acc, country) => {
+                let continentKey = country.continent;
+                if (continentKey === 'EAME' && europeanCountries.includes(country.name)) {
+                    continentKey = 'Europe';
+                }
+                if (!acc[continentKey]) acc[continentKey] = [];
+                acc[continentKey].push(country);
+                return acc;
+            }, {});
 
-function updateReachStats() {
-    const statsContainer = document.querySelector('.reach-stats');
-    statsContainer.innerHTML = '<h5>Erreichungsgrad pro Kontinent</h5>';
-    const groupedData = rbtcCountriesData.reduce((acc, country) => {
-        acc[country.continent] = (acc[country.continent] || 0) + 1;
-        return acc;
-    }, {});
+            for (const [continent, countries] of Object.entries(groupedData)) {
+                const countryList = countries.map(c => `
+                    <li>
+                        ${c.name} - ${c.url ? `<a href="https://${c.url.split(',')[0].trim()}" target="_blank">${c.url}</a>` : 'Keine spezifische URL verfügbar'} 
+                        (${c.color === 'gray' ? 'In Vorbereitung RBTC' : 'RBTC aktiv'})
+                    </li>
+                `).join('');
+                breakdownContainer.innerHTML += `
+                    <div>
+                        <h6>${continent}</h6>
+                        <ul>${countryList}</ul>
+                    </div>
+                `;
+            }
+        }
 
-    for (const [continent, rbtcCount] of Object.entries(groupedData)) {
-        const totalCountries = allCountriesInContinents[continent] || 0;
-        const reachPercentage = ((rbtcCount / totalCountries) * 100).toFixed(2);
-        statsContainer.innerHTML += `
-            <div>
-                <strong>${continent}</strong>: ${rbtcCount} von ${totalCountries} Ländern (${reachPercentage}%) 
-                (${rbtcCount} RBTC aktiv/In Vorbereitung)
-            </div>
-        `;
-    }
-}
+        function updateReachStats() {
+            const statsContainer = document.querySelector('.reach-stats');
+            statsContainer.innerHTML = '<h5>Erreichungsgrad pro Kontinent</h5>';
+            const groupedData = rbtcCountriesData.reduce((acc, country) => {
+                let continentKey = country.continent;
+                if (continentKey === 'EAME' && europeanCountries.includes(country.name)) {
+                    continentKey = 'Europe';
+                }
+                acc[continentKey] = (acc[continentKey] || 0) + 1;
+                return acc;
+            }, {});
+
+            for (const [continent, rbtcCount] of Object.entries(groupedData)) {
+                const totalCountries = allCountriesInContinents[continent] || 0;
+                const reachPercentage = totalCountries > 0 ? ((rbtcCount / totalCountries) * 100).toFixed(2) : '0.00';
+                statsContainer.innerHTML += `
+                    <div>
+                        <strong>${continent}</strong>: ${rbtcCount} von ${totalCountries} Ländern (${reachPercentage}%) 
+                        (${rbtcCount} RBTC aktiv/In Vorbereitung)
+                    </div>
+                `;
+            }
+        }
 
         updateContinentBreakdown();
         updateReachStats();
